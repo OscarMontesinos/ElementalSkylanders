@@ -31,36 +31,9 @@ public class Buff : MonoBehaviour
         regen += this.statsToChange.healthRegen;
         target.stats.strength += this.statsToChange.strength;
         target.stats.sinergy += this.statsToChange.sinergy;
-        target.stats.control += this.statsToChange.control;
         target.stats.atSpd += this.statsToChange.atSpd;
         target.stats.cdr += this.statsToChange.cdr;
-        target.stats.fResist += this.statsToChange.fResist;
-        target.stats.mResist += this.statsToChange.mResist;
-
-        if (this.statsToChange.spd > 0)
-        {
-            if (this.statsToChange.spd <= user.stats.control / spdThreshold)
-            {
-                target.stats.spd += this.statsToChange.spd;
-            }
-            else
-            {
-                this.statsToChange.spd = user.stats.control / spdThreshold;
-                target.stats.spd += this.statsToChange.spd;
-            }
-        }
-        else if (this.statsToChange.spd < 0)
-        {
-            if (this.statsToChange.spd <= user.stats.control / -spdThreshold)
-            {
-                target.stats.spd += this.statsToChange.spd;
-            }
-            else
-            {
-                this.statsToChange.spd = user.stats.control / -spdThreshold;
-                target.stats.spd += this.statsToChange.spd;
-            }
-        }
+        target.stats.resist += this.statsToChange.resist;
 
         if (particleFx)
         {
@@ -93,11 +66,9 @@ public class Buff : MonoBehaviour
 
         target.stats.strength -= statsToChange.strength;
         target.stats.sinergy -= statsToChange.sinergy;
-        target.stats.control -= statsToChange.control;
         target.stats.atSpd -= statsToChange.atSpd;
         target.stats.cdr -= statsToChange.cdr;
-        target.stats.fResist -= statsToChange.fResist;
-        target.stats.mResist -= statsToChange.mResist;
+        target.stats.resist -= statsToChange.resist;
         target.stats.spd -= statsToChange.spd;
         Destroy(this);
     }

@@ -56,27 +56,11 @@ public class PlayerController : MonoBehaviour
     {
         Cursor.visible = false;
 
-
-        Instantiate(GameManager.Instance.FoV, transform).GetComponent<FieldOfView>().team = character.team;
-
         StartCoroutine(PostStart());    
 
-        character.MoveSetUp();
         character.UIManager.UpdateHabIndicatorsImages();
 
-        maxRange = character.currentMoveBasic.range;
-        if (maxRange < character.currentMove1.range)
-        {
-            maxRange = character.currentMove1.range;
-        }
-        if (maxRange < character.currentMove2.range)
-        {
-            maxRange = character.currentMove2.range;
-        }
-        if (maxRange < character.currentMove3.range)
-        {
-            maxRange = character.currentMove3.range;
-        }
+        maxRange = character.maxRange;
     }
     
     IEnumerator PostStart()
@@ -88,51 +72,7 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         lockPointer = character.lockPointer;
-
-        if (!Input.GetKey(KeyCode.Tab))
-        {
-            foreach (PjBase unit in GameManager.Instance.pjList)
-            {
-                if (unit != null)
-                {
-
-                    if (unit.team != character.team)
-                    {
-                        var dir = unit.transform.position - transform.position;
-                        if (!Physics2D.Raycast(transform.position, dir, dir.magnitude, wallLayer))
-                        {
-                            if (Physics2D.Raycast(transform.position, dir, dir.magnitude, GameManager.Instance.playerWallLayer))
-                            {
-                                Barrier barrier = Physics2D.Raycast(transform.position, dir, dir.magnitude, GameManager.Instance.playerWallLayer).rigidbody.gameObject.GetComponent<Barrier>();
-                                if (barrier.user.team != character.team && barrier.deniesVision)
-                                {
-                                    unit.hide = true;
-                                }
-                                else
-                                {
-                                    unit.hide = false;
-                                }
-                            }
-                            else
-                            {
-                                unit.hide = false;
-                            }
-                        }
-                        else
-                        {
-                            unit.hide = true;
-                        }
-                    }
-                }
-            }
-        }
-        else
-        {
-            foreach (PjBase unit in GameManager.Instance.pjList)
-            {
-                unit.hide = false;
-            }
-        }
+       
 
         if(cam != Camera.main)
         {
@@ -226,7 +166,7 @@ public class PlayerController : MonoBehaviour
         {
             if (character.lookAtPointer)
             {
-                if (!lockPointer && Time.timeScale != 0)
+                if (!lockPointer && !character.dashing && Time.timeScale != 0)
                 {
                     Vector2 dir = UtilsClass.GetMouseWorldPosition() - character.pointer.transform.position;
                     character.pointer.transform.up = dir;
@@ -268,7 +208,7 @@ public class PlayerController : MonoBehaviour
                     if (target == null || target == character)
                     {
                         target = rayHit.collider.GetComponent<PjBase>();
-                        if (target == character || target.hide)
+                        if (target == character)
                         {
                             target = null;
                         }
@@ -281,19 +221,17 @@ public class PlayerController : MonoBehaviour
                         PjBase target2 = rayHit.collider.GetComponent<PjBase>();
                         Vector2 dist2 = target2.transform.position - character.transform.position;
 
-                        if (!target2.hide)
+                        if (dist2.magnitude < dist.magnitude)
                         {
-                            if (dist2.magnitude < dist.magnitude)
-                            {
-                                target = target2;
-                            }
-
-
-                            if (target == character)
-                            {
-                                target = targetbackUp;
-                            }
+                            target = target2;
                         }
+
+
+                        if (target == character)
+                        {
+                            target = targetbackUp;
+                        }
+
                     }
                     times++;
                 }
@@ -400,10 +338,6 @@ public class PlayerController : MonoBehaviour
             if (move2)
             {
                 StartCoroutine(character.Hab2());
-            }
-            if (move3)
-            {
-                StartCoroutine(character.Hab3());
             }
         }
     }

@@ -70,14 +70,6 @@ public class CameraController : MonoBehaviour
 
         if (moveAlone)
         {
-            if (!beginExpectate)
-            {
-                foreach(PjBase unit in GameManager.Instance.pjList)
-                {
-                    unit.hide = false;
-                }
-                fog.SetActive(false);
-            }
 
             if (Input.GetAxis("Mouse ScrollWheel") < 0f)
             {

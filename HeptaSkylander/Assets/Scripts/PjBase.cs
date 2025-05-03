@@ -33,43 +33,28 @@ public class PjBase : MonoBehaviour, TakeDamage
     public bool lookAtPointer;
     public GameObject pointer;
     public GameObject cursor;
-    public HitData.Element element1;
-    public HitData.Element element2;
+    public HitData.Element element;
     public GameObject spinObjects;
     public Slider hpBar;
     public Slider stunnBar;
     public Slider shieldBar;
     public TextMeshProUGUI hpBarText;
 
-    [Serializable]
-    public struct LearnableMove
-    {
-        public GameObject move;
-        public int lvl;
-    }
-    public List<LearnableMove> learnableMoves;
-
-    public GameObject moveContainer;
-    public GameObject moveBasic;
-    public GameObject move1;
-    public GameObject move2;
-    public GameObject move3;
-    [HideInInspector]
-    public Move currentMoveBasic;
-    [HideInInspector]
-    public Move currentMove1;
-    [HideInInspector]
-    public Move currentMove2;
-    [HideInInspector]
-    public Move currentMove3;
+    public Sprite hab1Image;
+    public Sprite hab2Image;
+    public float maxRange;
+    public float hab1Cd;
+    public float hab2Cd;
     [HideInInspector]
     public float currentBasicCd;
+    [HideInInspector]
+    public float comboReset;
+    [HideInInspector]
+    public int basicComboCount;
     [HideInInspector]
     public float currentHab1Cd;
     [HideInInspector]
     public float currentHab2Cd;
-    [HideInInspector]
-    public float currentHab3Cd;
     [HideInInspector]
     public bool casting;
     [HideInInspector]
@@ -79,18 +64,33 @@ public class PjBase : MonoBehaviour, TakeDamage
     [HideInInspector]
     public bool ignoreSoftCastDebuff;
     public Stats stats;
+    public Upgrades upgrades;
     public float damageTextOffset;
     [HideInInspector]
     public float dmgDealed;
-    public bool hide;
     public bool invisible;
-    public List<GameObject> revealedByList = new List<GameObject>();
+    public bool invulnerable;
     public GameObject visuals;
     float healCount;
     float dmgCount;
     public enum AttackType
     {
         Physical, Magical, None
+    }
+
+    [ContextMenu("CreateReferences")]
+    public void CreateReferences()
+    {
+        walk = true;
+        UIManager = transform.GetChild(1).gameObject.GetComponent<UIManager>();
+        sprite = transform.GetChild(0).GetChild(0).GetChild(0).gameObject;
+        pointer = transform.GetChild(0).GetChild(0).gameObject;
+        cursor = transform.GetChild(3).gameObject;
+        hpBar = transform.GetChild(0).GetChild(1).GetChild(0).gameObject.GetComponent<Slider>();
+        stunnBar = transform.GetChild(0).GetChild(1).GetChild(1).gameObject.GetComponent<Slider>();
+        shieldBar = transform.GetChild(0).GetChild(1).GetChild(2).gameObject.GetComponent<Slider>();
+        hpBarText = transform.GetChild(0).GetChild(1).GetChild(3).gameObject.GetComponent<TextMeshProUGUI>();
+        visuals = transform.GetChild(0).gameObject;
     }
 
     public virtual void Awake()
@@ -102,9 +102,7 @@ public class PjBase : MonoBehaviour, TakeDamage
         stats.mHp = (int)(Mathf.Lerp(stats.mHp * 0.35f, stats.mHp * 6, stats.lvl * (0.01f / 3)) * 3);
         stats.strength = (int)Mathf.Lerp(stats.strength * 0.35f, stats.strength * 6, stats.lvl * (0.01f / 3));
         stats.sinergy = (int)Mathf.Lerp(stats.sinergy * 0.35f, stats.sinergy * 6, stats.lvl * (0.01f / 3));
-        stats.control = (int)Mathf.Lerp(stats.control * 0.35f, stats.control * 6, stats.lvl * (0.01f / 3));
-        stats.fResist = (int)Mathf.Lerp(stats.fResist * 0.35f, stats.fResist * 6, stats.lvl * (0.01f / 3));
-        stats.mResist = (int)Mathf.Lerp(stats.mResist * 0.35f, stats.mResist * 6, stats.lvl * (0.01f / 3));
+        stats.resist = (int)Mathf.Lerp(stats.resist * 0.35f, stats.resist * 6, stats.lvl * (0.01f / 3));
 
         if (team != 0)
         {
@@ -123,6 +121,15 @@ public class PjBase : MonoBehaviour, TakeDamage
     }
     public virtual void Update()
     {
+        if(comboReset > 0)
+        {
+            comboReset -= Time.deltaTime;
+            if(comboReset <= 0)
+            {
+                basicComboCount = 0;
+            }
+        }
+
         if (walk)
         {
             animator.SetFloat("FrontVelocity", rb.velocity.magnitude);
@@ -145,14 +152,6 @@ public class PjBase : MonoBehaviour, TakeDamage
             shieldBar.maxValue = stats.mHp;
 
             hpBarText.text = stats.hp.ToString("F0");
-        }
-        if (hide && revealedByList.Count == 0)
-        {
-            visuals.SetActive(false);
-        }
-        else
-        {
-            visuals.SetActive(true);
         }
 
         if (stunTime > 0)
@@ -187,8 +186,6 @@ public class PjBase : MonoBehaviour, TakeDamage
 
         RechargeHab2();
 
-        RechargeHab3();
-
         if (spinObjects != null)
         {
             spinObjects.transform.rotation = pointer.transform.rotation;
@@ -196,29 +193,6 @@ public class PjBase : MonoBehaviour, TakeDamage
 
     }
 
-    public void MoveSetUp()
-    {
-        if (moveBasic)
-        {
-            currentMoveBasic = Instantiate(moveBasic, moveContainer.transform).GetComponent<Move>();
-            currentMoveBasic.user = this;
-        }
-        if (move1)
-        {
-            currentMove1 = Instantiate(move1, moveContainer.transform).GetComponent<Move>();
-            currentMove1.user = this;
-        }
-        if (move2)
-        {
-            currentMove2 = Instantiate(move2, moveContainer.transform).GetComponent<Move>();
-            currentMove2.user = this;
-        }
-        if (move3)
-        {
-            currentMove3 = Instantiate(move3, moveContainer.transform).GetComponent<Move>();
-            currentMove3.user = this;
-        }
-    }
 
     public virtual void RechargeHab1()
     {
@@ -234,64 +208,21 @@ public class PjBase : MonoBehaviour, TakeDamage
             currentHab2Cd -= Time.deltaTime;
         }
     }
-    public virtual void RechargeHab3()
-    {
-        if (currentHab3Cd > 0)
-        {
-            currentHab3Cd -= Time.deltaTime;
-        }
-    }
 
     public virtual IEnumerator MainAttack()
     {
-        if (currentBasicCd <= 0 && !casting && !dashing)
-        {
-            currentBasicCd = CalculateAtSpd(currentMoveBasic.cd * stats.atSpd);
-            lockPointer = false;
-            if (currentMoveBasic.cast)
-            {
-                casting = true;
-            }
-            lookAtPointer = true;
-            Vector2 dir = cursor.transform.position - pointer.transform.position;
-            pointer.transform.up = dir;
-            yield return null;
-
-            if (currentMoveBasic.lockPointer)
-            {
-                lockPointer = true;
-            }
-            StartCoroutine(PlayAnimation(currentMoveBasic.anim));
-            currentMoveBasic.Trigger();
-        }
+        yield return null;
     }
 
     public virtual IEnumerator Hab1()
     {
-        if (currentHab1Cd <= 0 && !casting && !dashing)
-        {
-            currentHab1Cd = CDR(currentMove1.cd);
-            lockPointer = false;
-            if (currentMove1.cast)
-            {
-                casting = true;
-            }
-            lookAtPointer = true;
-            Vector2 dir = cursor.transform.position - pointer.transform.position;
-            pointer.transform.up = dir;
-            yield return null;
-            if (currentMove1.lockPointer)
-            {
-                lockPointer = true;
-            }
-            StartCoroutine(PlayAnimation(currentMove1.anim));
-            currentMove1.Trigger();
-        }
+        yield return null;
     }
 
     public virtual IEnumerator Hab2()
     {
-        if (currentHab2Cd <= 0 && !casting && !dashing)
+        yield return null;
+        /*if (currentHab2Cd <= 0 && !casting && !dashing)
         {
             currentHab2Cd = CDR(currentMove2.cd);
             lockPointer = false;
@@ -309,30 +240,7 @@ public class PjBase : MonoBehaviour, TakeDamage
             }
             StartCoroutine(PlayAnimation(currentMove2.anim));
             currentMove2.Trigger();
-        }
-    }
-
-    public virtual IEnumerator Hab3()
-    {
-        if (currentHab3Cd <= 0 && !casting && !dashing)
-        {
-            currentHab3Cd = CDR(currentMove3.cd);
-            lockPointer = false;
-            if (currentMove3.cast)
-            {
-                casting = true;
-            }
-            lookAtPointer = true;
-            Vector2 dir = cursor.transform.position - pointer.transform.position;
-            pointer.transform.up = dir;
-            yield return null;
-            if (currentMove3.lockPointer)
-            {
-                lockPointer = true;
-            }
-            StartCoroutine(PlayAnimation(currentMove3.anim));
-            currentMove3.Trigger();
-        }
+        }*/
     }
 
     public virtual void UsedBasicDash()
@@ -433,6 +341,21 @@ public class PjBase : MonoBehaviour, TakeDamage
        /*Neutral*/ new float[]{ 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f}
     };
 
+    public float CalculateDmg(float baseDmg)
+    {
+        return CalculateDmg(baseDmg,0);
+    }
+    public float CalculateDmg(float baseDmg, float critChanceMod)
+    {
+        float critRoll = Random.Range(0f, 100f);
+        if(critRoll < critChanceMod + stats.critChance)
+        {
+            baseDmg *= stats.critDmgMult;
+        }
+
+        return baseDmg;
+    }
+
     void TakeDamage.TakeDamage(PjBase user,float value, HitData.Element element, AttackType type)
     {
         TakeDmg(user, value, element, type);
@@ -483,20 +406,14 @@ public class PjBase : MonoBehaviour, TakeDamage
         }
 
         float effectivenessMultiplier = 1;
-        effectivenessMultiplier += typesChart[(int)element][(int)element1] + typesChart[(int)element][(int)element2];
+        effectivenessMultiplier += typesChart[(int)element][(int)this.element];
 
         
 
         value *= effectivenessMultiplier;
 
-        if (type == AttackType.Magical)
-        {
-            calculo = stats.mResist;
-        }
-        else
-        {
-            calculo = stats.fResist;
-        }
+        calculo = stats.resist;
+        
 
         if (calculo < 0)
         {
@@ -642,10 +559,6 @@ public class PjBase : MonoBehaviour, TakeDamage
     public virtual void Stunn(PjBase target, float value)
     {
         target.GetComponent<TakeDamage>().Stunn(value);
-
-        currentMove1.OnStun();
-        currentMove2.OnStun();
-        currentMove3.OnStun();
     }
 
     public virtual void OnGlobalStunn(PjBase target, float value)
@@ -687,10 +600,6 @@ public class PjBase : MonoBehaviour, TakeDamage
         killer.OnKill(this);
 
         GameManager.Instance.pjList.Remove(this);
-        if (GameManager.Instance.currentWave.Contains(gameObject))
-        {
-            GameManager.Instance.currentWave.Remove(gameObject);
-        }
 
         Destroy(gameObject);
     }
@@ -713,13 +622,6 @@ public class PjBase : MonoBehaviour, TakeDamage
 
     }
 
-    public virtual float CalculateControl(float calculo)
-    {
-        float value = stats.control;
-        value *= calculo / 100;
-        //valor.text = value.ToString();
-        return value;
-    }
     public float CDR(float value)
     {
         value -= ((value * ((stats.cdr / (100 + stats.cdr)))));
@@ -733,18 +635,30 @@ public class PjBase : MonoBehaviour, TakeDamage
 
     public virtual IEnumerator Dash(Vector2 direction, float speed, float range)
     {
-        yield return null;
         if (this != null)
         {
             StartCoroutine(Dash(direction, speed, range, false,true));
         }
+        yield return null;
     }
     public virtual IEnumerator Dash(Vector2 direction, float speed, float range, bool ignoreWalls, bool ignoreAir)
     {
-        if (dashing || stunTime > 0)
+        if (this != null)
+        {
+            StartCoroutine(Dash(direction, speed, range, false, true, true));
+        }
+        yield return null;
+    }
+    public virtual IEnumerator Dash(Vector2 direction, float speed, float range, bool ignoreWalls, bool ignoreAir, bool cancelAnimation)
+    {
+        if (stunTime > 0)
+        {
+            stunTime = 0;
+            yield return null;
+        }
+        if (dashing)
         {
             dashing = false;
-            stunTime = 0;
             yield return null;
         }
 
@@ -808,9 +722,64 @@ public class PjBase : MonoBehaviour, TakeDamage
         }
 
 
+        if (cancelAnimation)
+        {
+            StartCoroutine(PlayAnimation("Idle"));
+            AnimationCallStopAnim();
+        }
+    }
+    public virtual IEnumerator Dash(Transform direction, float speed, float range, bool ignoreWalls, bool ignoreAir, bool cancelAnimation)
+    {
+        if (stunTime > 0)
+        {
+            stunTime = 0;
+            yield return null;
+        }
 
-        StartCoroutine(PlayAnimation("Idle"));
-        AnimationCallStopAnim();
+        StartCoroutine(PlayAnimation("Dash"));
+
+        if (GetComponent<NavMeshAgent>())
+        {
+            GetComponent<NavMeshAgent>().enabled = false;
+        }
+
+
+        GetComponent<Collider2D>().isTrigger = true;
+
+        dashing = true;
+       
+        NavMeshHit hit;
+
+        Vector2 distance = (Vector2)direction.position - new Vector2(transform.position.x, transform.position.y);
+        yield return null;
+        while (distance.magnitude > 0.4 && dashing && stunTime <= 0 && direction)
+        {
+            if (distance.magnitude > 0.7)
+            {
+                rb.velocity = distance.normalized * speed;
+            }
+            else
+            {
+                rb.velocity = distance * speed;
+            }
+            distance = (Vector2)direction.position - new Vector2(transform.position.x, transform.position.y);
+            yield return null;
+        }
+        dashing = false;
+        rb.velocity = new Vector2(0, 0);
+
+        GetComponent<Collider2D>().isTrigger = false;
+        if (GetComponent<NavMeshAgent>())
+        {
+            GetComponent<NavMeshAgent>().enabled = true;
+        }
+
+
+        if (cancelAnimation)
+        {
+            StartCoroutine(PlayAnimation("Idle"));
+            AnimationCallStopAnim();
+        }
     }
 
     public void AnimationCursorLock(int value)

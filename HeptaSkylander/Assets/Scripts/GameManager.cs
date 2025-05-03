@@ -41,22 +41,10 @@ public class GameManager : MonoBehaviour
     public Color32 lightningColor;
     public Color32 crystalColor;
 
-    public GameObject FoV;
-
     public float ingameSpeed;
 
-    public bool spawn;
-    public List<GameObject> waveSpawners;
 
-    [Serializable]
-    public struct Wave
-    {
-        public List<GameObject> enemies;
-    }
-
-    public List<Wave> waves;
-    [HideInInspector]
-    public List<GameObject> currentWave;
+   
 
     public enum GameModes
     {
@@ -78,39 +66,11 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         Time.timeScale = ingameSpeed;
-
-        if (spawn)
-        {
-            foreach (GameObject unit in waves[Random.Range(0,waves.Count)].enemies)
-            {
-                GameObject waveSpawner = GetWaveSpawner();
-                GameObject enemy = Instantiate(unit, waveSpawner.transform.position, waveSpawner.transform.rotation);
-                currentWave.Add(enemy);
-            }
-        }
     }
 
     // Update is called once per frame
     void Update()
     {
-
-        if (currentWave.Count == 0 && spawn)
-        {
-            foreach (PjBase unit in pjList)
-            {
-                if (unit != null)
-                {
-                    unit.Heal(unit, unit.stats.mHp * 0.5f, unit.element1);
-                }
-            }
-
-            foreach (GameObject unit in waves[Random.Range(0, waves.Count)].enemies)
-            {
-                GameObject waveSpawner = GetWaveSpawner();
-                GameObject enemy = Instantiate(unit, waveSpawner.transform.position, waveSpawner.transform.rotation);
-                currentWave.Add(enemy);
-            }
-        }
 
     }
 
@@ -121,27 +81,4 @@ public class GameManager : MonoBehaviour
         return new Vector2(-angle.x,angle.z);
     }
 
-    public GameObject GetWaveSpawner()
-    {
-        float maxRange = 0;
-        float range = 0;
-        GameObject selectedSpawner = null;
-        foreach (GameObject spawner in waveSpawners)
-        {
-            foreach (PjBase pj in pjList)
-            {
-                range = 0;
-                range += (spawner.transform.position - pj.transform.position).magnitude;
-            }
-
-
-            if (spawner == null || range > maxRange)
-            {
-                selectedSpawner = spawner;
-                maxRange = range;
-            }
-        }
-
-        return selectedSpawner;
-    }
 }

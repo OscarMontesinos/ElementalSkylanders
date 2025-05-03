@@ -60,6 +60,8 @@ public class UIManager : MonoBehaviour
 
     void UpdateHpBars()
     {
+        hpSlider.transform.GetChild(1).GetChild(0).GetComponent<Image>().color = GetElementColor();
+
         hpSlider.value = ch.stats.hp;
         hpSlider.maxValue = ch.stats.mHp;
         hpText.text = ch.stats.hp.ToString("F0");
@@ -80,23 +82,44 @@ public class UIManager : MonoBehaviour
         stunSlider.value = ch.stunTime;
     }
 
+    Color32 GetElementColor()
+    {
+        switch (ch.element)
+        {
+            case HitData.Element.wind:
+                return GameManager.Instance.windColor; 
+            case HitData.Element.water:
+                return GameManager.Instance.waterColor; 
+            case HitData.Element.fire:
+                return GameManager.Instance.fireColor; 
+            case HitData.Element.crystal:
+                return GameManager.Instance.crystalColor; 
+            case HitData.Element.nature:
+                return GameManager.Instance.natureColor; 
+            case HitData.Element.desert:
+                return GameManager.Instance.desertColor; 
+            case HitData.Element.ice:
+                return GameManager.Instance.iceColor; 
+            case HitData.Element.lightning:
+                return GameManager.Instance.lightningColor;
+            default:
+                return hpSlider.colors.normalColor;
+        }
+        
+    }
+
 
     public void UpdateHabIndicatorsImages()
     {
-        if (ch.currentMove1)
+        if (ch.hab1Image)
         {
-            habIndicators[0].UpdateImage(ch.currentMove1.sprite);
-            habIndicators[3].UpdateImage(ch.currentMove1.sprite);
+            habIndicators[0].UpdateImage(ch.hab1Image);
+            habIndicators[2].UpdateImage(ch.hab1Image);
         }
-        if (ch.currentMove2)
+        if (ch.hab2Image)
         {
-            habIndicators[1].UpdateImage(ch.currentMove2.sprite);
-            habIndicators[4].UpdateImage(ch.currentMove2.sprite);
-        }
-        if (ch.currentMove3)
-        {
-            habIndicators[2].UpdateImage(ch.currentMove3.sprite);
-            habIndicators[5].UpdateImage(ch.currentMove3.sprite);
+            habIndicators[1].UpdateImage(ch.hab2Image);
+            habIndicators[3].UpdateImage(ch.hab2Image);
         }
     }
 
@@ -119,21 +142,10 @@ public class UIManager : MonoBehaviour
 
         if (ch != null && ch.stats.hp > 0)
         {
-            if (ch.currentMove1)
-            {
-                habIndicators[0].UIUpdate(ch.currentMove1.cd, ch.currentHab1Cd);
-                habIndicators[3].UIUpdate(ch.currentMove1.cd, ch.currentHab1Cd);
-            }
-            if (ch.currentMove2)
-            {
-                habIndicators[1].UIUpdate(ch.currentMove2.cd, ch.currentHab2Cd);
-                habIndicators[4].UIUpdate(ch.currentMove2.cd, ch.currentHab2Cd);
-            }
-            if (ch.currentMove3)
-            {
-                habIndicators[2].UIUpdate(ch.currentMove3.cd, ch.currentHab3Cd);
-                habIndicators[5].UIUpdate(ch.currentMove3.cd, ch.currentHab3Cd);
-            }
+            habIndicators[0].UIUpdate(ch.hab1Cd, ch.currentHab1Cd);
+            habIndicators[2].UIUpdate(ch.hab1Cd, ch.currentHab1Cd);
+            habIndicators[1].UIUpdate(ch.hab2Cd, ch.currentHab2Cd);
+            habIndicators[3].UIUpdate(ch.hab2Cd, ch.currentHab2Cd);
         }
     }
 

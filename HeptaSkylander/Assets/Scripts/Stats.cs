@@ -17,10 +17,10 @@ public class Stats
     
     public float strength;
     public float sinergy;
-    public float control;
+    public float critChance;
+    public float critDmgMult = 75;
 
-    public float fResist;
-    public float mResist;
+    public float resist;
 
     public float spd;
 
