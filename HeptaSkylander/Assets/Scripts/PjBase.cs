@@ -9,6 +9,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.TextCore.Text;
 using UnityEngine.UI;
+using static UnityEngine.EventSystems.EventTrigger;
 using static UnityEngine.Rendering.DebugUI;
 using Random = UnityEngine.Random;
 
@@ -100,8 +101,10 @@ public class PjBase : MonoBehaviour, TakeDamage
         animator = GetComponent<Animator>();
 
         stats.mHp = (int)(Mathf.Lerp(stats.mHp * 0.35f, stats.mHp * 6, stats.lvl * (0.01f / 3)) * 3);
+        stats.mPosture = (int)(Mathf.Lerp(stats.mPosture * 0.35f, stats.mPosture * 6, stats.lvl * (0.01f / 3)) * 3);
         stats.strength = (int)Mathf.Lerp(stats.strength * 0.35f, stats.strength * 6, stats.lvl * (0.01f / 3));
         stats.sinergy = (int)Mathf.Lerp(stats.sinergy * 0.35f, stats.sinergy * 6, stats.lvl * (0.01f / 3));
+        stats.rupture = (int)Mathf.Lerp(stats.rupture * 0.35f, stats.rupture * 6, stats.lvl * (0.01f / 3));
         stats.resist = (int)Mathf.Lerp(stats.resist * 0.35f, stats.resist * 6, stats.lvl * (0.01f / 3));
 
         if (team != 0)
@@ -112,6 +115,7 @@ public class PjBase : MonoBehaviour, TakeDamage
     public virtual void Start()
     {
         stats.hp = stats.mHp;
+        stats.posture = stats.mPosture;
 
         GameManager.Instance.pjList.Add(this);
         if (hpBar != null)
@@ -151,28 +155,18 @@ public class PjBase : MonoBehaviour, TakeDamage
             shieldBar.value = stats.shield;
             shieldBar.maxValue = stats.mHp;
 
+            stunnBar.maxValue = stats.mPosture;
+            stunnBar.value = stats.posture;
+
             hpBarText.text = stats.hp.ToString("F0");
         }
 
         if (stunTime > 0)
         {
             stunTime -= Time.deltaTime;
-            if (stunnBar != null)
+            if(stunTime <= 0)
             {
-                if (stunnBar.maxValue < stunTime)
-                {
-                    stunnBar.maxValue = stunTime;
-                }
-
-                stunnBar.value = stunTime;
-            }
-        }
-        else
-        {
-            if (stunnBar != null)
-            {
-                stunnBar.maxValue = 0.3f;
-                stunnBar.value = 0;
+                stats.posture = stats.mPosture;
             }
         }
 
@@ -356,12 +350,12 @@ public class PjBase : MonoBehaviour, TakeDamage
         return baseDmg;
     }
 
-    void TakeDamage.TakeDamage(PjBase user,float value, HitData.Element element, AttackType type)
+    void TakeDamage.TakeDamage(PjBase user,float value, HitData.Element element)
     {
-        TakeDmg(user, value, element, type);
+        TakeDmg(user, value, element);
     }
 
-    public virtual void TakeDmg(PjBase user, float value, HitData.Element element, AttackType type)
+    public virtual void TakeDmg(PjBase user, float value, HitData.Element element)
     {
         user.RegisterDamage(value - stats.shield);
         float calculo = 0;
@@ -491,7 +485,21 @@ public class PjBase : MonoBehaviour, TakeDamage
             hpBar.value = stats.hp;
         }
     }
-
+    void TakeDamage.TakeRupture(PjBase user, float value)
+    {
+        TakeRupture(user, value);
+    }
+    public virtual void TakeRupture(PjBase user, float value)
+    {
+        if (stunTime <= 0)
+        {
+            stats.posture -= value * 2;
+            if (stats.posture <= 0)
+            {
+                Stunn(user, ((user.stats.rupture * user.stats.ruptureMult) / 100) + (((user.stats.sinergy + user.stats.strength) * 45)) / 100);
+            }
+        }
+    }
     public virtual void Heal(PjBase user, float value, HitData.Element element)
     {
         if (stats.hp > 0)
@@ -556,10 +564,7 @@ public class PjBase : MonoBehaviour, TakeDamage
 
     }
 
-    public virtual void Stunn(PjBase target, float value)
-    {
-        target.GetComponent<TakeDamage>().Stunn(value);
-    }
+    
 
     public virtual void OnGlobalStunn(PjBase target, float value)
     {
@@ -584,16 +589,14 @@ public class PjBase : MonoBehaviour, TakeDamage
     {
 
     }
-    void TakeDamage.Stunn(float stunTime)
+    void Stunn(PjBase user, float stunDmg)
     {
-        if (this.stunTime < stunTime)
+        stunTime = 3; 
+        if (controller)
         {
-            if (controller)
-            {
-                stunTime /= 3;
-            }
-            this.stunTime = stunTime;
+            stunTime /= 3;
         }
+        GetComponent<TakeDamage>().TakeDamage(user, stunDmg, user.element);
     }
     void TakeDamage.Die(PjBase killer)
     {
@@ -616,6 +619,15 @@ public class PjBase : MonoBehaviour, TakeDamage
     public virtual float CalculateStrength(float calculo)
     {
         float value = stats.strength;
+        value *= calculo / 100;
+        //valor.text = value.ToString();
+        return value;
+
+    }
+
+    public virtual float CalculateRupture(float calculo)
+    {
+        float value = stats.rupture;
         value *= calculo / 100;
         //valor.text = value.ToString();
         return value;

@@ -11,11 +11,13 @@ public class Upgrades
     public bool upg3;
     public bool upg4;
 
-    public bool path1upg1;
-    public bool path1upg2;
-    public bool path1upg3;
+    public bool path1;
+    public bool path1Upg1;
+    public bool path1Upg2;
+    public bool path1Upg3;
 
-    public bool path2upg1;
-    public bool path2upg2;
-    public bool path2upg3;
+    public bool path2;
+    public bool path2Upg1;
+    public bool path2Upg2;
+    public bool path2Upg3;
 }

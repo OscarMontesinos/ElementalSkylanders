@@ -352,11 +352,15 @@ MonoBehaviour:
   stats:
     lvl: 1
     mHp: 100
+    mPosture: 50
     hp: 0
-    healthRegen: 1
+    posture: 0
+    healthRegen: 0
     shield: 0
     strength: 40
     sinergy: 40
+    rupture: 40
+    ruptureMult: 135
     critChance: 0
     critDmgMult: 75
     resist: 0
@@ -368,12 +372,14 @@ MonoBehaviour:
     upg2: 0
     upg3: 0
     upg4: 0
-    path1upg1: 0
-    path1upg2: 0
-    path1upg3: 0
-    path2upg1: 0
-    path2upg2: 0
-    path2upg3: 0
+    path1: 0
+    path1Upg1: 0
+    path1Upg2: 0
+    path1Upg3: 0
+    path2: 0
+    path2Upg1: 0
+    path2Upg2: 0
+    path2Upg3: 0
   damageTextOffset: 1
   dmgDealed: 0
   invisible: 0
@@ -909,7 +915,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4236322770131913033, guid: 9951dc35b407f974db774e7f02674eaa, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5144334651718507071, guid: 9951dc35b407f974db774e7f02674eaa, type: 3}
       propertyPath: m_AnchorMax.x

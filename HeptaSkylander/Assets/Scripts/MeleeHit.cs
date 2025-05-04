@@ -37,7 +37,7 @@ public class MeleeHit : MonoBehaviour
             enemy = enemyColl.GetComponent<PjBase>();
             if (enemy.team != user.team)
             {
-                enemy.GetComponent<TakeDamage>().TakeDamage(user, dmg, element, type);
+                enemy.GetComponent<TakeDamage>().TakeDamage(user, dmg, element);
             }
         }
     }

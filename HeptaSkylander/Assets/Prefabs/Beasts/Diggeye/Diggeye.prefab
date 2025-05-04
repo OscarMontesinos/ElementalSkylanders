@@ -1104,11 +1104,15 @@ MonoBehaviour:
   stats:
     lvl: 1
     mHp: 45
+    mPosture: 35
     hp: 0
+    posture: 0
     healthRegen: 1
     shield: 0
     strength: 60
     sinergy: 20
+    rupture: 25
+    ruptureMult: 135
     critChance: 0
     critDmgMult: 75
     resist: 40
@@ -1120,12 +1124,14 @@ MonoBehaviour:
     upg2: 0
     upg3: 0
     upg4: 0
-    path1upg1: 0
-    path1upg2: 0
-    path1upg3: 0
-    path2upg1: 0
-    path2upg2: 0
-    path2upg3: 0
+    path1: 0
+    path1Upg1: 0
+    path1Upg2: 0
+    path1Upg3: 0
+    path2: 0
+    path2Upg1: 0
+    path2Upg2: 0
+    path2Upg3: 0
   damageTextOffset: 0
   dmgDealed: 0
   invisible: 0
@@ -1144,11 +1150,17 @@ MonoBehaviour:
   hab1Offset: 1.5
   hab1RangeExt: 6
   undergroundFx: {fileID: 4357234253534811578}
-  hab2ExtraSpd: 2.5
+  hab2ExtraSpd: 4
   hab2MinTime: 0.35
   up1DashRange: 8
   up1DashSpd: 37.5
   up2Dashes: 3
+  up3DmgBoost: 35
+  up4Fx: {fileID: 8993820445824448182, guid: 19c96f383bd98f64587259ab48999616, type: 3}
+  up4Area: 6.5
+  up4Dmg: 20
+  up4Rupture: 60
+  p1Up2DmgMult: 40
 --- !u!1 &8074388031177618119 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7185100018732391839, guid: 8b3f640e1ab28104292574ee30b932fe, type: 3}

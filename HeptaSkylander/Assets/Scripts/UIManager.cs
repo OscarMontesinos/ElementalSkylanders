@@ -66,7 +66,8 @@ public class UIManager : MonoBehaviour
         hpSlider.maxValue = ch.stats.mHp;
         hpText.text = ch.stats.hp.ToString("F0");
 
-        ch.stunnBar = stunSlider;
+        stunSlider.maxValue = ch.stats.mPosture;
+        stunSlider.value = ch.stats.posture;
 
         shieldSlider.value = ch.stats.shield;
         shieldSlider.maxValue = ch.stats.mHp*1.5f;
@@ -78,8 +79,6 @@ public class UIManager : MonoBehaviour
         {
             shieldText.text = "";
         }
-
-        stunSlider.value = ch.stunTime;
     }
 
     Color32 GetElementColor()

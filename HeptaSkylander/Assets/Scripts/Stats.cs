@@ -8,8 +8,11 @@ public class Stats
 {
     public int lvl;
     public float mHp;
+    public float mPosture;
     [HideInInspector]
     public float hp;
+    [HideInInspector]
+    public float posture;
     public float healthRegen;
     [HideInInspector]
     public float shield;
@@ -17,6 +20,8 @@ public class Stats
     
     public float strength;
     public float sinergy;
+    public float rupture;
+    public float ruptureMult = 135;
     public float critChance;
     public float critDmgMult = 75;
 

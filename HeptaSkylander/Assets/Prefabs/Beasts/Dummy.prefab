@@ -108,12 +108,16 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7185100020070105984, guid: 8b3f640e1ab28104292574ee30b932fe, type: 3}
+      propertyPath: stunnBar
+      value: 
+      objectReference: {fileID: 8552768534002529249}
+    - target: {fileID: 7185100020070105984, guid: 8b3f640e1ab28104292574ee30b932fe, type: 3}
       propertyPath: controller
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 7185100020070106109, guid: 8b3f640e1ab28104292574ee30b932fe, type: 3}
       propertyPath: m_Name
-      value: Dummy
+      value: Izq
       objectReference: {fileID: 0}
     - target: {fileID: 7185100020070106110, guid: 8b3f640e1ab28104292574ee30b932fe, type: 3}
       propertyPath: m_RootOrder
@@ -121,11 +125,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7185100020070106110, guid: 8b3f640e1ab28104292574ee30b932fe, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -8.19
       objectReference: {fileID: 0}
     - target: {fileID: 7185100020070106110, guid: 8b3f640e1ab28104292574ee30b932fe, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 97.3
       objectReference: {fileID: 0}
     - target: {fileID: 7185100020070106110, guid: 8b3f640e1ab28104292574ee30b932fe, type: 3}
       propertyPath: m_LocalPosition.z
@@ -186,3 +190,14 @@ PrefabInstance:
     m_RemovedComponents:
     - {fileID: 7185100020070106111, guid: 8b3f640e1ab28104292574ee30b932fe, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 8b3f640e1ab28104292574ee30b932fe, type: 3}
+--- !u!114 &8552768534002529249 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5453161705773703036, guid: 8b3f640e1ab28104292574ee30b932fe, type: 3}
+  m_PrefabInstance: {fileID: 4403407760607964317}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

@@ -42,13 +42,11 @@ public class Barrier : MonoBehaviour, TakeDamage
     {
             Destroy(gameObject);
     }
-
-    void TakeDamage.Stunn(float stunnTime)
+    void TakeDamage.TakeRupture(PjBase user, float value)
     {
 
     }
-
-    void TakeDamage.TakeDamage(PjBase user, float value, HitData.Element element, PjBase.AttackType type)
+    void TakeDamage.TakeDamage(PjBase user, float value, HitData.Element element)
     {
         hp -= value;
         if (hp <= 0 && !indestructible)
