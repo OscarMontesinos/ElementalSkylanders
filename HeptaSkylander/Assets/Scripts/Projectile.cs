@@ -85,7 +85,7 @@ public class Projectile : MonoBehaviour
         if(collision.CompareTag("Unit") && collision.GetComponent<PjBase>().team != user.team && !targetsAffected.Contains( collision.GetComponent<PjBase>()))
         {
             PjBase target = collision.GetComponent<PjBase>();
-            target.GetComponent<TakeDamage>().TakeDamage(user, dmg, element);
+            target.GetComponent<TakeDamage>().TakeDamage(user, user.CalculateDmg(dmg,out bool isCrit), element, isCrit);
             targetsAffected.Add(target);
             if (!pierce)
             {

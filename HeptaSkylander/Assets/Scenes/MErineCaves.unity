@@ -1778,6 +1778,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9009439391554608863, guid: 4ef6d3bf10df1a441923a4d1588e66f9, type: 3}
+      propertyPath: upgrades.path1Upg1
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9009439391554608863, guid: 4ef6d3bf10df1a441923a4d1588e66f9, type: 3}
       propertyPath: upgrades.path1Upg2
       value: 1
       objectReference: {fileID: 0}

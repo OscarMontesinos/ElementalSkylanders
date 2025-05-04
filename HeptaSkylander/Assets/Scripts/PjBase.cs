@@ -335,27 +335,30 @@ public class PjBase : MonoBehaviour, TakeDamage
        /*Neutral*/ new float[]{ 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f}
     };
 
-    public float CalculateDmg(float baseDmg)
+    public float CalculateDmg(float baseDmg, out bool isCrit)
     {
-        return CalculateDmg(baseDmg,0);
+        isCrit = false;
+        return CalculateDmg(baseDmg,0, out isCrit);
     }
-    public float CalculateDmg(float baseDmg, float critChanceMod)
+    public float CalculateDmg(float baseDmg, float critChanceMod, out bool isCrit)
     {
+        isCrit = false;
         float critRoll = Random.Range(0f, 100f);
         if(critRoll < critChanceMod + stats.critChance)
         {
-            baseDmg *= stats.critDmgMult;
+            isCrit = true;
+            baseDmg += ((baseDmg*stats.critDmgMult)/100);
         }
 
         return baseDmg;
     }
 
-    void TakeDamage.TakeDamage(PjBase user,float value, HitData.Element element)
+    void TakeDamage.TakeDamage(PjBase user,float value, HitData.Element element, bool isCrit)
     {
-        TakeDmg(user, value, element);
+        TakeDmg(user, value, element, isCrit);
     }
 
-    public virtual void TakeDmg(PjBase user, float value, HitData.Element element)
+    public virtual void TakeDmg(PjBase user, float value, HitData.Element element, bool isCrit)
     {
         user.RegisterDamage(value - stats.shield);
         float calculo = 0;
@@ -447,22 +450,30 @@ public class PjBase : MonoBehaviour, TakeDamage
 
         if (dText != null)
         {
+            if (isCrit)
+            {
+                dText.damageText.text = "Crit ";
+            }
+            else
+            {
+                dText.damageText.text = "";
+            }
             switch (effectivenessMultiplier)
             {
                 case 0.4f:
-                    dText.damageText.text = (value + dmgCount).ToString("F0") + "VV";
+                    dText.damageText.text = dText.damageText.text + (value + dmgCount).ToString("F0") + "VV";
                     break;
                 case 0.7f:
-                    dText.damageText.text = (value + dmgCount).ToString("F0") + "V";
+                    dText.damageText.text = dText.damageText.text + (value + dmgCount).ToString("F0") + "V";
                     break;
                 case 1:
-                    dText.damageText.text = (value + dmgCount).ToString("F0");
+                    dText.damageText.text = dText.damageText.text + (value + dmgCount).ToString("F0");
                     break;
                 case 1.3f:
-                    dText.damageText.text = (value + dmgCount).ToString("F0") + "!";
+                    dText.damageText.text = dText.damageText.text + (value + dmgCount).ToString("F0") + "!";
                     break;
                 case 1.6f:
-                    dText.damageText.text = (value + dmgCount).ToString("F0") + "!!";
+                    dText.damageText.text = dText.damageText.text + (value + dmgCount).ToString("F0") + "!!";
                     break;
             }
             dText.damageText.fontSize += 0.25f;
@@ -596,7 +607,7 @@ public class PjBase : MonoBehaviour, TakeDamage
         {
             stunTime /= 3;
         }
-        GetComponent<TakeDamage>().TakeDamage(user, stunDmg, user.element);
+        GetComponent<TakeDamage>().TakeDamage(user, stunDmg, user.element, false);
     }
     void TakeDamage.Die(PjBase killer)
     {

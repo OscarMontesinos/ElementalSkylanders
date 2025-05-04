@@ -39,6 +39,8 @@ public class Diggeye : PjBase
     public float up4Dmg;
     public float up4Rupture;
 
+    bool p1Up1Active;
+
     bool p1Up2Active;
     public float p1Up2DmgMult;
 
@@ -56,7 +58,14 @@ public class Diggeye : PjBase
     {
         if (hab2Underground)
         {
-            hab2ActualEnergy -= Time.deltaTime * 5;
+            if (upgrades.path1)
+            {
+                hab2ActualEnergy -= Time.deltaTime;
+            }
+            else
+            {
+                hab2ActualEnergy -= Time.deltaTime * 10;
+            }
             animator.Play("Dash");
             if(hab2ActualEnergy <= 0)
             {
@@ -141,7 +150,7 @@ public class Diggeye : PjBase
             enemy = enemyColl.GetComponent<PjBase>();
             if (enemy.team != team)
             {
-                enemy.GetComponent<TakeDamage>().TakeDamage(this, CalculateDmg(dmg), element);
+                enemy.GetComponent<TakeDamage>().TakeDamage(this, CalculateDmg(dmg, out bool isCrit), element,isCrit);
                 Instantiate(basicFxImpact, enemy.transform.position, transform.rotation);
             }
         }
@@ -166,7 +175,7 @@ public class Diggeye : PjBase
             enemy = enemyColl.GetComponent<PjBase>();
             if (enemy.team != team)
             {
-                enemy.GetComponent<TakeDamage>().TakeDamage(this, CalculateDmg(dmg), element);
+                enemy.GetComponent<TakeDamage>().TakeDamage(this, CalculateDmg(dmg, out bool isCrit), element, isCrit);
                 enemy.GetComponent<TakeDamage>().TakeRupture(this, rupture);
             }
         }
@@ -212,172 +221,206 @@ public class Diggeye : PjBase
 
             StartCoroutine(PlayAnimation("DiggeyeBasic3"));
         }
-        else if (currentHab1Cd <= 0 && !casting && !dashing)
+        else if (hab2Underground && upgrades.path1Upg1 && !casting && !dashing)
         {
-            if(upgrades.path1Upg2 && hab2Underground)
+            p1Up1Active = true;
+            if (upgrades.path1Upg2)
             {
                 p1Up2Active = true;
             }
-            Unbury();
-            currentHab1Cd = CDR(hab1Cd);
-            lockPointer = false;
-            casting = true;
-            lookAtPointer = true;
-            Vector2 dir = cursor.transform.position - pointer.transform.position;
-            pointer.transform.up = dir;
-            yield return null;
-            lookAtPointer = false;
-            float dmg;
-            dmg = CalculateStrength(hab1Dmg);
-            if (p1Up2Active)
+            StartCoroutine(UseHab1());
+        }
+        else if (currentHab1Cd <= 0 && !casting && !dashing)
+        {
+            if (hab2Underground)
             {
-                dmg += (dmg * p1Up2DmgMult) / 100;
-            }
-
-            StartCoroutine(Dash(pointer.transform.up, hab1Spd, hab1Range));
-
-            while (!dashing)
-            {
-                yield return null;
-            }
-            List<PjBase> targetsAffected = new List<PjBase>();
-            while (dashing)
-            {
-                dir = transform.position + (pointer.transform.up.normalized * hab1Offset);
-                Collider2D[] enemiesHit = Physics2D.OverlapCircleAll(dir, hab1Area, GameManager.Instance.unitLayer);
-                PjBase enemy;
-                foreach (Collider2D enemyColl in enemiesHit)
+                if (upgrades.path1Upg2)
                 {
-                    enemy = enemyColl.GetComponent<PjBase>();
-                    if (enemy.team != team && !targetsAffected.Contains(enemy))
+                    p1Up2Active = true;
+                }
+            }
+            StartCoroutine(UseHab1());
+            currentHab1Cd = CDR(hab1Cd);
+
+            yield return base.Hab1();
+        }
+    }
+
+    IEnumerator UseHab1()
+    {
+        Unbury();
+        lockPointer = false;
+        casting = true;
+        lookAtPointer = true;
+        Vector2 dir = cursor.transform.position - pointer.transform.position;
+        pointer.transform.up = dir;
+        yield return null;
+        lookAtPointer = false;
+        float dmg;
+        dmg = CalculateStrength(hab1Dmg);
+        if (p1Up2Active)
+        {
+            dmg += (dmg * p1Up2DmgMult) / 100;
+        }
+
+        StartCoroutine(Dash(pointer.transform.up, hab1Spd, hab1Range));
+
+        while (!dashing)
+        {
+            yield return null;
+        }
+        List<PjBase> targetsAffected = new List<PjBase>();
+        while (dashing)
+        {
+            dir = transform.position + (pointer.transform.up.normalized * hab1Offset);
+            Collider2D[] enemiesHit = Physics2D.OverlapCircleAll(dir, hab1Area, GameManager.Instance.unitLayer);
+            PjBase enemy;
+            foreach (Collider2D enemyColl in enemiesHit)
+            {
+                enemy = enemyColl.GetComponent<PjBase>();
+                if (enemy.team != team && !targetsAffected.Contains(enemy))
+                {
+                    if (!p1Up1Active)
                     {
-                        enemy.GetComponent<TakeDamage>().TakeDamage(this, dmg, element);
-                        Instantiate(basicFxImpact, enemy.transform.position, transform.rotation);
-                        StartCoroutine(Dash(pointer.transform.up, hab1Spd, hab1RangeExt));
-                        if (p1Up2Active)
-                        {
-                            UnburyAttack();
-                        }
+                        enemy.GetComponent<TakeDamage>().TakeDamage(this, CalculateDmg(dmg, out bool isCrit), element, isCrit);
+                    }
+                    else
+                    {
+                        enemy.GetComponent<TakeDamage>().TakeDamage(this, CalculateDmg(dmg, 100, out bool isCrit), element, isCrit);
+                    }
+                    Instantiate(basicFxImpact, enemy.transform.position, transform.rotation);
+                    StartCoroutine(Dash(pointer.transform.up, hab1Spd, hab1RangeExt));
+                    if (p1Up2Active)
+                    {
+                        UnburyAttack();
+                    }
 
-                        targetsAffected.Add(enemy);
-                        while (!dashing)
-                        {
-                            yield return null;
-                        }
+                    targetsAffected.Add(enemy);
+                    while (!dashing)
+                    {
+                        yield return null;
+                    }
 
-                        while (dashing)
-                        {
-                            yield return null;
-                        } 
+                    while (dashing)
+                    {
+                        yield return null;
+                    }
 
-                        if (upgrades.upg2)
-                        {
-                            up2CurrentDashes = up2Dashes;
+                    if (upgrades.upg2)
+                    {
+                        up2CurrentDashes = up2Dashes;
 
-                            while (up2CurrentDashes > 0)
+                        while (up2CurrentDashes > 0)
+                        {
+                            PjBase enemy2;
+                            enemiesHit = Physics2D.OverlapCircleAll(transform.position, hab1Range, GameManager.Instance.unitLayer);
+                            bool checker = false;
+                            foreach (Collider2D enemyColl2 in enemiesHit)
                             {
-                                PjBase enemy2;
-                                enemiesHit = Physics2D.OverlapCircleAll(transform.position, hab1Range, GameManager.Instance.unitLayer);
-                                bool checker = false;
-                                foreach (Collider2D enemyColl2 in enemiesHit)
+                                enemy2 = enemyColl2.GetComponent<PjBase>();
+                                if (enemy2.team != team)
+                                {
+                                    if (!targetsAffected.Contains(enemy2))
+                                    {
+                                        checker = true;
+                                    }
+                                }
+
+                            }
+
+                            if (!checker)
+                            {
+                                targetsAffected.Clear();
+                            }
+                            enemy2 = null;
+                            foreach (Collider2D enemyColl2 in enemiesHit)
+                            {
+                                if (!enemy2 && enemyColl2.GetComponent<PjBase>().team != team)
                                 {
                                     enemy2 = enemyColl2.GetComponent<PjBase>();
-                                    if (enemy2.team != team)
-                                    {
-                                        if (!targetsAffected.Contains(enemy2))
-                                        {
-                                            checker = true;
-                                        }
-                                    }
-
                                 }
-
-                                if (!checker)
+                                else if (enemy2 && enemyColl2.GetComponent<PjBase>().team != team)
                                 {
-                                    targetsAffected.Clear();
-                                }
-                                enemy2 = null;
-                                foreach (Collider2D enemyColl2 in enemiesHit)
-                                {
-                                    if (!enemy2 && enemyColl2.GetComponent<PjBase>().team != team)
+                                    if (targetsAffected.Contains(enemy2) && !targetsAffected.Contains(enemyColl2.GetComponent<PjBase>()))
                                     {
                                         enemy2 = enemyColl2.GetComponent<PjBase>();
                                     }
-                                    else if (enemy2 && enemyColl2.GetComponent<PjBase>().team != team)
+                                    else if (!targetsAffected.Contains(enemyColl2.GetComponent<PjBase>()))
                                     {
-                                        if (targetsAffected.Contains(enemy2) && !targetsAffected.Contains(enemyColl2.GetComponent<PjBase>()))
+                                        float enemyDist = Vector2.Distance(enemy2.transform.position, transform.position);
+                                        float newEnemyDist = Vector2.Distance(enemyColl2.GetComponent<PjBase>().transform.position, transform.position);
+                                        if (newEnemyDist > enemyDist)
                                         {
                                             enemy2 = enemyColl2.GetComponent<PjBase>();
-                                        }
-                                        else if (!targetsAffected.Contains(enemyColl2.GetComponent<PjBase>()))
-                                        {
-                                            float enemyDist = Vector2.Distance(enemy2.transform.position, transform.position);
-                                            float newEnemyDist = Vector2.Distance(enemyColl2.GetComponent<PjBase>().transform.position, transform.position);
-                                            if (newEnemyDist > enemyDist)
-                                            {
-                                                enemy2 = enemyColl2.GetComponent<PjBase>();
-                                                
-                                            }
-                                        }
 
+                                        }
                                     }
 
                                 }
-                                targetsAffected.Add(enemy2);
-                                if (!enemy2)
-                                {
-                                    break;
-                                }
-                                StartCoroutine(Dash(enemy2.transform, hab1Spd, hab1Range, false, true, true));
 
-                                while (!dashing)
-                                {
-                                    yield return null;
-                                }
-
-                                List<PjBase> currentTargetsAffected = new List<PjBase>();
-                                while (dashing)
-                                {
-                                    enemiesHit = Physics2D.OverlapCircleAll(transform.position, hab1Area + 0.75f, GameManager.Instance.unitLayer);
-                                    PjBase potentialEnemy;
-                                    foreach (Collider2D enemyColl3 in enemiesHit)
-                                    {
-                                            potentialEnemy = enemyColl3.GetComponent<PjBase>();
-                                            if (potentialEnemy == enemy2 && !currentTargetsAffected.Contains(enemy2))
-                                            {
-                                                if (p1Up2Active)
-                                                {
-                                                    UnburyAttack();
-                                                }
-                                                enemy2.GetComponent<TakeDamage>().TakeDamage(this, dmg, element);
-                                                Instantiate(basicFxImpact, enemy2.transform.position, transform.rotation);
-                                                StartCoroutine(Dash((enemy2.transform.position - transform.position).normalized, hab1Spd, hab1RangeExt));
-                                                currentTargetsAffected.Add(enemy2);
-                                                while (!dashing)
-                                                {
-                                                    yield return null;
-                                                }
-
-                                                while (dashing)
-                                                {
-                                                    yield return null;
-                                                }
-
-                                            }
-                                    }
-                                    yield return null;
-                                }
-                                up2CurrentDashes--;
                             }
+                            targetsAffected.Add(enemy2);
+                            if (!enemy2)
+                            {
+                                break;
+                            }
+                            StartCoroutine(Dash(enemy2.transform, hab1Spd, hab1Range, false, true, true));
+
+                            while (!dashing)
+                            {
+                                yield return null;
+                            }
+
+                            List<PjBase> currentTargetsAffected = new List<PjBase>();
+                            while (dashing)
+                            {
+                                enemiesHit = Physics2D.OverlapCircleAll(transform.position, hab1Area + 0.75f, GameManager.Instance.unitLayer);
+                                PjBase potentialEnemy;
+                                foreach (Collider2D enemyColl3 in enemiesHit)
+                                {
+                                    potentialEnemy = enemyColl3.GetComponent<PjBase>();
+                                    if (potentialEnemy == enemy2 && !currentTargetsAffected.Contains(enemy2))
+                                    {
+                                        if (p1Up2Active)
+                                        {
+                                            UnburyAttack();
+                                        }
+
+                                        if (!p1Up1Active)
+                                        {
+                                            enemy2.GetComponent<TakeDamage>().TakeDamage(this, CalculateDmg(dmg, out bool isCrit), element, isCrit);
+                                        }
+                                        else
+                                        {
+                                            enemy2.GetComponent<TakeDamage>().TakeDamage(this, CalculateDmg(dmg, 100,out bool isCrit), element, isCrit);
+                                        }
+                                        Instantiate(basicFxImpact, enemy2.transform.position, transform.rotation);
+                                        StartCoroutine(Dash((enemy2.transform.position - transform.position).normalized, hab1Spd, hab1RangeExt));
+                                        currentTargetsAffected.Add(enemy2);
+                                        while (!dashing)
+                                        {
+                                            yield return null;
+                                        }
+
+                                        while (dashing)
+                                        {
+                                            yield return null;
+                                        }
+
+                                    }
+                                }
+                                yield return null;
+                            }
+                            up2CurrentDashes--;
                         }
                     }
                 }
-                yield return null;
             }
-
-            p1Up2Active = false;
+            yield return null;
         }
-        yield return base.Hab1();
+
+        p1Up2Active = false;
+        p1Up1Active = false;
     }
     
 
@@ -421,6 +464,15 @@ public class Diggeye : PjBase
             undergroundFx.SetActive(false);
             animator.Play("Idle");
         }
+    }
+
+    public override void OnKill(PjBase target)
+    {
+        if (upgrades.path1)
+        {
+            hab2ActualEnergy = hab2Cd;
+        }
+        base.OnKill(target);
     }
 
 

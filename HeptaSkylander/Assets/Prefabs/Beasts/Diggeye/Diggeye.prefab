@@ -1091,7 +1091,7 @@ MonoBehaviour:
   hab2Image: {fileID: 21300000, guid: 7a663cca1bb4c6645b64eee79ae80eb5, type: 3}
   maxRange: 0
   hab1Cd: 5
-  hab2Cd: 7.5
+  hab2Cd: 15
   currentBasicCd: 0
   comboReset: 0
   basicComboCount: 0
