@@ -44,6 +44,34 @@ public class Diggeye : PjBase
     bool p1Up2Active;
     public float p1Up2DmgMult;
 
+    public float p1Up3ExtraSpd;
+    public int p1Up3ExtraJumps;
+
+    public GameObject p2Up0ParticleToDisactivate;
+    public GameObject p2Up0ParticleToActivate;
+    public float p2Up0Range;
+    public float p2Up0Area;
+    public float p2Up0DashRange;
+    public float p2Up0DashSpd;
+    bool p2Up0DashAvailable;
+    bool p2up0canActiveTripleAttack;
+
+    public float p2up2DmgBoost;
+    public float p2up2HpBoost;
+    public float p2up2ResisBoost;
+
+    List<PjBase> p2Up1enemiesSucked= new List<PjBase>();
+    public float p2Up1LifePercentageHeal;
+    public override void Awake()
+    {
+        if (upgrades.path2Upg2)
+        {
+            stats.mHp += p2up2HpBoost;
+            stats.resist += p2up2ResisBoost;
+        }
+        base.Awake();
+    }
+
     public override void Start()
     {
         if (upgrades.upg3)
@@ -51,6 +79,24 @@ public class Diggeye : PjBase
             basicDmg += ((basicDmg * up3DmgBoost) / 100);
             hab1Dmg += ((hab1Dmg * up3DmgBoost) / 100);
         }
+        if (upgrades.path2Upg2)
+        {
+            basicDmg += ((basicDmg * p2up2DmgBoost) / 100);
+            hab1Dmg += ((hab1Dmg * p2up2DmgBoost) / 100);
+        }
+        if (upgrades.path1Upg3)
+        {
+            up2Dashes += p1Up3ExtraJumps;
+            hab1Spd += p1Up3ExtraSpd;
+        }
+        if(upgrades.path2) 
+        { 
+            p2Up0ParticleToActivate.SetActive(true);
+            p2Up0ParticleToDisactivate.SetActive(false);
+            basicArea = p2Up0Area;
+            basicRange = p2Up0Range;
+        }
+        
         hab2ActualEnergy = hab2Cd;
         base.Start();
     }
@@ -78,6 +124,10 @@ public class Diggeye : PjBase
         }
         currentHab2Cd = hab2ActualEnergy;
         base.Update();
+        if(currentHab1Cd <= 0)
+        {
+            p2Up0DashAvailable = false;
+        }
     }
 
     public override IEnumerator MainAttack()
@@ -99,25 +149,28 @@ public class Diggeye : PjBase
             yield return null;
             lockPointer = true;
 
-            float range = 0;
-            float speed = 0;
-            if (Physics2D.CircleCast(transform.position + (pointer.transform.up.normalized * basicRange), 2, pointer.transform.up, up1DashRange, GameManager.Instance.wallLayer + GameManager.Instance.unitLayer))
+            if (!upgrades.path2)
             {
-                Vector2 dist = Physics2D.CircleCast(transform.position + (pointer.transform.up.normalized * basicRange), 1, pointer.transform.up, up1DashRange, GameManager.Instance.unitLayer).point - new Vector2(transform.position.x, transform.position.y);
-                range = basicDashRange - ((basicDashRange - dist.magnitude) + 0.5f);
-                speed = up1DashSpd / (up1DashRange / range);
-                if (speed > up1DashSpd)
+                float range = 0;
+                float speed = 0;
+                if (Physics2D.CircleCast(transform.position + (pointer.transform.up.normalized * basicRange), 2, pointer.transform.up, up1DashRange, GameManager.Instance.unitLayer))
                 {
-                    speed = up1DashSpd;
-                }
-                if (range > basicDashRange)
-                {
-                    range = 0;
-                }
+                    Vector2 dist = Physics2D.CircleCast(transform.position + (pointer.transform.up.normalized * basicRange), 1, pointer.transform.up, up1DashRange, GameManager.Instance.unitLayer).point - new Vector2(transform.position.x, transform.position.y);
+                    range = basicDashRange - ((basicDashRange - dist.magnitude) + 0.5f);
+                    speed = up1DashSpd / (up1DashRange / range);
+                    if (speed > up1DashSpd)
+                    {
+                        speed = up1DashSpd;
+                    }
+                    if (range > basicDashRange)
+                    {
+                        range = 0;
+                    }
 
-                if (range > 0)
-                {
-                    StartCoroutine(Dash(pointer.transform.up, speed, range, false, false, false));
+                    if (range > 0)
+                    {
+                        StartCoroutine(Dash(pointer.transform.up, speed, range, false, false, false));
+                    }
                 }
             }
 
@@ -131,6 +184,10 @@ public class Diggeye : PjBase
             }
             basicComboCount += 1;
             comboReset = 0.75f;
+        }
+        else if(dashing && p2up0canActiveTripleAttack)
+        {
+            p2up0canActiveTripleAttack = false;
         }
 
         yield return base.MainAttack();
@@ -185,41 +242,7 @@ public class Diggeye : PjBase
     {
         if (basicComboCount >= 2 && upgrades.upg1 && !casting && !dashing)
         {
-            basicComboCount = 0;
-            if (currentHab1Cd < 1)
-            {
-                currentHab1Cd = 1;
-            }
-            currentBasicCd = CalculateAtSpd(basicCd * stats.atSpd);
-            lockPointer = false;
-            casting = true;
-            lookAtPointer = true;
-
-            yield return null;
-            lockPointer = true;
-            Vector2 dir = cursor.transform.position - pointer.transform.position;
-            pointer.transform.up = dir;
-            float range = 0;
-            float speed = 0;
-            if (Physics2D.CircleCast(transform.position + (pointer.transform.up.normalized * basicRange), 2, pointer.transform.up, up1DashRange, GameManager.Instance.unitLayer))
-            {
-                Vector2 dist = Physics2D.CircleCast(transform.position + (pointer.transform.up.normalized * basicRange), 1, pointer.transform.up, up1DashRange, GameManager.Instance.wallLayer + GameManager.Instance.unitLayer).point - new Vector2(transform.position.x, transform.position.y);
-                range = up1DashRange - ((up1DashRange - dist.magnitude) + 0.5f);
-                speed = up1DashSpd / (up1DashRange / range);
-                if (speed > up1DashSpd)
-                {
-                    speed = up1DashSpd;
-                }
-                if (range > up1DashRange)
-                {
-                    range = 0;
-                }
-
-                StartCoroutine(Dash(pointer.transform.up, speed, range, false, false, false));
-            }
-            yield return null;
-
-            StartCoroutine(PlayAnimation("DiggeyeBasic3"));
+            StartCoroutine(TripleAttack());
         }
         else if (hab2Underground && upgrades.path1Upg1 && !casting && !dashing)
         {
@@ -241,11 +264,87 @@ public class Diggeye : PjBase
             }
             StartCoroutine(UseHab1());
             currentHab1Cd = CDR(hab1Cd);
+            if (upgrades.path2)
+            {
+                p2Up0DashAvailable = true;
+            }
 
             yield return base.Hab1();
         }
+        else if (!casting && p2Up0DashAvailable)
+        {
+            StartCoroutine(P2Dash());
+        }
     }
+    IEnumerator P2Dash()
+    {
+        p2Up0DashAvailable = false;
+        lockPointer = false;
+        casting = true;
+        lookAtPointer = true;
+        Vector2 dir = cursor.transform.position - pointer.transform.position;
+        pointer.transform.up = dir;
+        yield return null;
+        lookAtPointer = false;
+        StartCoroutine(Dash(pointer.transform.up, p2Up0DashSpd, p2Up0DashRange));
+        p2up0canActiveTripleAttack = true;
 
+        while (!dashing)
+        {
+            yield return null;
+        }
+        while (dashing)
+        {
+            yield return null;
+        }
+        yield return null;
+        if (!p2up0canActiveTripleAttack)
+        {
+            StartCoroutine(TripleAttack());
+        }
+        p2up0canActiveTripleAttack = false;
+    }
+    IEnumerator TripleAttack()
+    {
+        basicComboCount = 0;
+        if (currentHab1Cd < 1)
+        {
+            currentHab1Cd = 1;
+        }
+        currentBasicCd = CalculateAtSpd(basicCd * stats.atSpd);
+        lockPointer = false;
+        casting = true;
+        lookAtPointer = true;
+
+        yield return null;
+        lockPointer = true;
+        Vector2 dir = cursor.transform.position - pointer.transform.position;
+        pointer.transform.up = dir;
+        if (!upgrades.path2)
+        {
+            float range = 0;
+            float speed = 0;
+            if (Physics2D.CircleCast(transform.position + (pointer.transform.up.normalized * basicRange), 2, pointer.transform.up, up1DashRange, GameManager.Instance.unitLayer))
+            {
+                Vector2 dist = Physics2D.CircleCast(transform.position + (pointer.transform.up.normalized * basicRange), 1, pointer.transform.up, up1DashRange, GameManager.Instance.unitLayer).point - new Vector2(transform.position.x, transform.position.y);
+                range = up1DashRange - ((up1DashRange - dist.magnitude) + 0.5f);
+                speed = up1DashSpd / (up1DashRange / range);
+                if (speed > up1DashSpd)
+                {
+                    speed = up1DashSpd;
+                }
+                if (range > up1DashRange)
+                {
+                    range = 0;
+                }
+
+                StartCoroutine(Dash(pointer.transform.up, speed, range, false, false, false));
+            }
+        }
+        yield return null;
+
+        StartCoroutine(PlayAnimation("DiggeyeBasic3"));
+    }
     IEnumerator UseHab1()
     {
         Unbury();
@@ -270,6 +369,7 @@ public class Diggeye : PjBase
             yield return null;
         }
         List<PjBase> targetsAffected = new List<PjBase>();
+        List<PjBase> targetsDmgd = new List<PjBase>();
         while (dashing)
         {
             dir = transform.position + (pointer.transform.up.normalized * hab1Offset);
@@ -296,6 +396,7 @@ public class Diggeye : PjBase
                     }
 
                     targetsAffected.Add(enemy);
+                    targetsDmgd.Add(enemy);
                     while (!dashing)
                     {
                         yield return null;
@@ -313,7 +414,7 @@ public class Diggeye : PjBase
                         while (up2CurrentDashes > 0)
                         {
                             PjBase enemy2;
-                            enemiesHit = Physics2D.OverlapCircleAll(transform.position, hab1Range, GameManager.Instance.unitLayer);
+                            enemiesHit = Physics2D.OverlapCircleAll(transform.position, hab1Range/1.5F, GameManager.Instance.unitLayer);
                             bool checker = false;
                             foreach (Collider2D enemyColl2 in enemiesHit)
                             {
@@ -388,12 +489,27 @@ public class Diggeye : PjBase
 
                                         if (!p1Up1Active)
                                         {
-                                            enemy2.GetComponent<TakeDamage>().TakeDamage(this, CalculateDmg(dmg, out bool isCrit), element, isCrit);
+                                            if (!targetsDmgd.Contains(enemy2))
+                                            {
+                                                enemy2.GetComponent<TakeDamage>().TakeDamage(this, CalculateDmg(dmg, out bool isCrit), element, isCrit);
+                                            }
+                                            else
+                                            {
+                                                enemy2.GetComponent<TakeDamage>().TakeDamage(this, CalculateDmg(dmg*0.4f, out bool isCrit), element, isCrit);
+                                            }
                                         }
                                         else
                                         {
-                                            enemy2.GetComponent<TakeDamage>().TakeDamage(this, CalculateDmg(dmg, 100,out bool isCrit), element, isCrit);
+                                            if (!targetsDmgd.Contains(enemy2))
+                                            {
+                                                enemy2.GetComponent<TakeDamage>().TakeDamage(this, CalculateDmg(dmg,100, out bool isCrit), element, isCrit);
+                                            }
+                                            else
+                                            {
+                                                enemy2.GetComponent<TakeDamage>().TakeDamage(this, CalculateDmg(dmg * 0.4f,100, out bool isCrit), element, isCrit);
+                                            }
                                         }
+                                        targetsDmgd.Add(enemy2);
                                         Instantiate(basicFxImpact, enemy2.transform.position, transform.rotation);
                                         StartCoroutine(Dash((enemy2.transform.position - transform.position).normalized, hab1Spd, hab1RangeExt));
                                         currentTargetsAffected.Add(enemy2);
@@ -465,6 +581,15 @@ public class Diggeye : PjBase
             animator.Play("Idle");
         }
     }
+    public override void DamageDealed(PjBase target, float amount)
+    {
+        if (upgrades.path2Upg1 && !p2Up1enemiesSucked.Contains(target))
+        {
+            p2Up1enemiesSucked.Add(target);
+            Heal(this, ((p2Up1LifePercentageHeal * stats.mHp) / 100), element);
+        }
+        base.DamageDealed(target, amount);
+    }
 
     public override void OnKill(PjBase target)
     {
@@ -478,7 +603,14 @@ public class Diggeye : PjBase
 
     public void OnDrawGizmosSelected()
     {
-        Gizmos.DrawWireSphere(transform.position + (transform.up.normalized * basicRange), basicArea);
+        if (!upgrades.path2)
+        {
+            Gizmos.DrawWireSphere(transform.position + (transform.up.normalized * basicRange), basicArea);
+        }
+        else
+        {
+            Gizmos.DrawWireSphere(transform.position + (transform.up.normalized * p2Up0Range), p2Up0Area);
+        }
 
         Gizmos.DrawWireSphere(transform.position + (transform.up.normalized * hab1Offset), hab1Area);
 

@@ -312,13 +312,8 @@ public class PjBase : MonoBehaviour, TakeDamage
         }
     }
 
-    public virtual void DamageDealed(PjBase user, PjBase target, float amount, HitData.Element element, HitData.AttackType attackType, HitData.HabType habType)
-    {
-        List<HitInteract> hitList = new List<HitInteract>( target.gameObject.GetComponents<HitInteract>());
-        foreach (HitInteract hit in hitList)
-        {
-            hit.Interact(user,target,amount,element,attackType,habType);
-        }
+    public virtual void DamageDealed(PjBase target, float amount)
+    {     
         
     }
 
@@ -486,6 +481,7 @@ public class PjBase : MonoBehaviour, TakeDamage
 
         stats.hp -= value;
         user.RegisterDamage(value);
+        user.DamageDealed(this,value);
         if (stats.hp <= 0)
         {
             GetComponent<TakeDamage>().Die(user);
@@ -504,10 +500,10 @@ public class PjBase : MonoBehaviour, TakeDamage
     {
         if (stunTime <= 0)
         {
-            stats.posture -= value * 2;
+            stats.posture -= value;
             if (stats.posture <= 0)
             {
-                Stunn(user, ((user.stats.rupture * user.stats.ruptureMult) / 100) + (((user.stats.sinergy + user.stats.strength) * 45)) / 100);
+                Stunn(user, ((user.stats.rupture * user.stats.ruptureMult) / 100) + (((user.stats.sinergy + user.stats.strength) * 30)) / 100);
             }
         }
     }
