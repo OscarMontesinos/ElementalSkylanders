@@ -59,6 +59,8 @@ public class PjBase : MonoBehaviour, TakeDamage
     [HideInInspector]
     public bool casting;
     [HideInInspector]
+    public bool softCasting;
+    [HideInInspector]
     public bool dashing;
     [HideInInspector]
     public float stunTime;
@@ -263,6 +265,7 @@ public class PjBase : MonoBehaviour, TakeDamage
 
     public virtual void AnimationCallStopAnim()
     {
+        softCasting = false;
         casting = false;
         lockPointer = false;
         lookAtPointer = false;
@@ -270,7 +273,7 @@ public class PjBase : MonoBehaviour, TakeDamage
 
     public bool IsCasting()
     {
-        if(!casting)
+        if(!softCasting && !casting)
         {
             return false;
         }
@@ -639,6 +642,14 @@ public class PjBase : MonoBehaviour, TakeDamage
         //valor.text = value.ToString();
         return value;
 
+    }
+
+    public virtual float CalculateMHp(float calculo)
+    {
+        float value = stats.mHp;
+        value *= calculo / 100;
+        //valor.text = value.ToString();
+        return value;
     }
 
     public float CDR(float value)

@@ -137,11 +137,11 @@ public class Diggeye : PjBase
             UnburyAttack();
             StartCoroutine(PlayAnimation("Special"));
         }
-        else if (currentBasicCd <= 0 && !casting && !dashing)
+        else if (currentBasicCd <= 0 && !softCasting && !dashing)
         {
             currentBasicCd = CalculateAtSpd(basicCd * stats.atSpd);
             lockPointer = false;
-            casting = false;
+            softCasting = false;
             lookAtPointer = true;
 
             Vector2 dir = cursor.transform.position - pointer.transform.position;
@@ -240,11 +240,11 @@ public class Diggeye : PjBase
 
     public override IEnumerator Hab1()
     {
-        if (basicComboCount >= 2 && upgrades.upg1 && !casting && !dashing)
+        if (basicComboCount >= 2 && upgrades.upg1 && !softCasting && !dashing)
         {
             StartCoroutine(TripleAttack());
         }
-        else if (hab2Underground && upgrades.path1Upg1 && !casting && !dashing)
+        else if (hab2Underground && upgrades.path1Upg1 && !softCasting && !dashing)
         {
             p1Up1Active = true;
             if (upgrades.path1Upg2)
@@ -253,7 +253,7 @@ public class Diggeye : PjBase
             }
             StartCoroutine(UseHab1());
         }
-        else if (currentHab1Cd <= 0 && !casting && !dashing)
+        else if (currentHab1Cd <= 0 && !softCasting && !dashing)
         {
             if (hab2Underground)
             {
@@ -271,7 +271,7 @@ public class Diggeye : PjBase
 
             yield return base.Hab1();
         }
-        else if (!casting && p2Up0DashAvailable)
+        else if (!softCasting && p2Up0DashAvailable)
         {
             StartCoroutine(P2Dash());
         }
@@ -280,7 +280,7 @@ public class Diggeye : PjBase
     {
         p2Up0DashAvailable = false;
         lockPointer = false;
-        casting = true;
+        softCasting = true;
         lookAtPointer = true;
         Vector2 dir = cursor.transform.position - pointer.transform.position;
         pointer.transform.up = dir;
@@ -313,7 +313,7 @@ public class Diggeye : PjBase
         }
         currentBasicCd = CalculateAtSpd(basicCd * stats.atSpd);
         lockPointer = false;
-        casting = true;
+        softCasting = true;
         lookAtPointer = true;
 
         yield return null;
@@ -349,7 +349,7 @@ public class Diggeye : PjBase
     {
         Unbury();
         lockPointer = false;
-        casting = true;
+        softCasting = true;
         lookAtPointer = true;
         Vector2 dir = cursor.transform.position - pointer.transform.position;
         pointer.transform.up = dir;
@@ -542,7 +542,7 @@ public class Diggeye : PjBase
 
     public override IEnumerator Hab2()
     {
-        if ((hab2ActualEnergy >= hab2Cd || hab2Underground) && !casting && !dashing && upgrades.upg1 && upgrades.upg2)
+        if ((hab2ActualEnergy >= hab2Cd || hab2Underground) && !softCasting && !dashing && upgrades.upg1 && upgrades.upg2)
         {
             if (!hab2Underground)
             {
@@ -552,9 +552,9 @@ public class Diggeye : PjBase
             {
                 Unbury();
             }
-            casting = true;
+            softCasting = true;
             yield return new WaitForSeconds(hab2MinTime);
-            casting = false;
+            softCasting = false;
         }
         yield return base.Hab2();
     }

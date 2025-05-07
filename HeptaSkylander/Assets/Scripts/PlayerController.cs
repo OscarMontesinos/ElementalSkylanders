@@ -137,7 +137,7 @@ public class PlayerController : MonoBehaviour
         {
             if (!character.dashing)
             {
-                if (character.stunTime <= 0)
+                if (character.stunTime <= 0 && !character.casting)
                 {
                     rb.velocity = (transform.right * inputMov.x + transform.up * inputMov.y) * character.stats.spd;
                 }

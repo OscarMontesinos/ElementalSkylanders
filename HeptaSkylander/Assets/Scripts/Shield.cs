@@ -5,13 +5,22 @@ using UnityEngine;
 public class Shield : Buff
 {
     public float shieldAmount;
+    public float maxShieldAmount;
 
-    public void ShieldSetUp(PjBase user,PjBase target, float shieldAmount, float duration, GameObject particleFx)
+    public void ShieldSetUp(PjBase user,PjBase target, float shieldAmount,float maxShieldAmmount, float duration, GameObject particleFx)
     {
         this.user = user;
         this.target = target;
+        this.shieldAmount = shieldAmount;
         ChangeShieldAmount(shieldAmount);
-        this.duration = duration;
+        if (duration == 0)
+        {
+            this.untimed = true;
+        }
+        else
+        {
+            this.duration = duration;
+        }
         this.particleFx = particleFx;
 
     }
@@ -39,6 +48,11 @@ public class Shield : Buff
         if(target.stats.shield < 0)
         {
             target.stats.shield = 0;
+        }
+
+        if(maxShieldAmount>0 && maxShieldAmount < shieldAmount)
+        {
+            shieldAmount = maxShieldAmount;
         }
 
         return -value;

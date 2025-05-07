@@ -346,6 +346,7 @@ MonoBehaviour:
   currentHab1Cd: 0
   currentHab2Cd: 0
   casting: 0
+  softCasting: 0
   dashing: 0
   stunTime: 0
   ignoreSoftCastDebuff: 0
@@ -613,6 +614,10 @@ PrefabInstance:
     - target: {fileID: 2369449134891691676, guid: 1ffc2911cc331f3439ede73e0c969f2e, type: 3}
       propertyPath: m_PresetInfoIsWorld
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2979302134069253553, guid: 1ffc2911cc331f3439ede73e0c969f2e, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2979302134069253553, guid: 1ffc2911cc331f3439ede73e0c969f2e, type: 3}
       propertyPath: m_AnchorMax.y
@@ -915,7 +920,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4236322770131913033, guid: 9951dc35b407f974db774e7f02674eaa, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5144334651718507071, guid: 9951dc35b407f974db774e7f02674eaa, type: 3}
       propertyPath: m_AnchorMax.x
