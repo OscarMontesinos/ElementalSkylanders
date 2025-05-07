@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using System.Xml;
 using UnityEngine;
+using UnityEngine.InputSystem.XR.Haptics;
 using static UnityEditor.FilePathAttribute;
 
 public class Amphrost : PjBase
@@ -45,12 +47,81 @@ public class Amphrost : PjBase
     public float up3Range;
     public float up3Spd;
 
+    public GameObject p1Mark;
+    public List<IceMark> p1IceMarks = new List<IceMark> ();
+    public float p1ruptureMult;
+    public float p1MarkDmg;
+    public float p1MarkRuptureDmg;
+
+    public GameObject p1up2SpikesObject;
+    public GameObject p1up2Fx1;
+    public GameObject p1up2Fx2;
+    public float p1up2Delay;
+    public float p1up2Area1;
+    public float p1up2Area2;
+
+    public float p1up3BuffDuration;
+    float p1up3CurrentBuffDuration;
+    public float p1up3ExtraAtSpd;
+    public float p1up3CdReduc;
+
+    public float p2HpBoost;
+    public int p2ExtraTicks;
+    public float p2MaxExplosionValue;
+    public float p2MinExplosionValue;
+    [HideInInspector]
+    public float p2CurrentExplosionValue;
+    public GameObject p2ExplosionFx;
+
+    public float p2up2TimePerTick;
+    float p2up2CurrentTimePerTick;
+
+    public override void Awake()
+    {
+        if (upgrades.path2)
+        {
+            stats.mHp += p2HpBoost;
+            hab2TicksPerSecond += p2ExtraTicks;
+        }
+        base.Awake();
+    }
+
+    public override void Update()
+    {
+        base.Update();
+        if(p1up3CurrentBuffDuration> 0)
+        {
+            p1up3CurrentBuffDuration-=Time.deltaTime;
+            if(p1up3CurrentBuffDuration <= 0)
+            {
+                stats.atSpd -= p1up3ExtraAtSpd;
+            }
+        }
+
+        if (upgrades.path2Upg2 && hab2Shield.shieldAmount > 0)
+        {
+            if(p2up2CurrentTimePerTick > 0)
+            {
+                p2up2CurrentTimePerTick -= Time.deltaTime;
+                if(p2up2CurrentTimePerTick <= 0)
+                {
+                    IceExplosion(transform.position,true);
+                    p2up2CurrentTimePerTick = p2up2TimePerTick;
+                }
+            }
+        }
+    }
     public override void Start()
     {
         base.Start();
         hab2Shield = gameObject.AddComponent<GlacialShield>();
         hab2Shield.ShieldSetUp(this, this, 0, CalculateMHp(hab2MaxShield), 0, null);
         hab2Shield.amphrost = this;
+
+        if (upgrades.path1)
+        {
+            basicRuptureDmg += ((basicRuptureDmg * p1ruptureMult) / 100);
+        }
     }
     public override IEnumerator MainAttack()
     {
@@ -91,6 +162,7 @@ public class Amphrost : PjBase
         Vector2 dir = transform.position;
         Collider2D[] enemiesHit = Physics2D.OverlapCircleAll(dir, basicArea, GameManager.Instance.unitLayer);
         PjBase enemy;
+        bool impact = false;
         foreach (Collider2D enemyColl in enemiesHit)
         {
             enemy = enemyColl.GetComponent<PjBase>();
@@ -100,7 +172,23 @@ public class Amphrost : PjBase
                 enemy.GetComponent<TakeDamage>().TakeRupture(this, rupture);
                 GameObject fx = Instantiate(basicFxImpact, enemy.transform.position, transform.rotation);
                 fx.transform.up = fx.transform.position - transform.position;
+
+                if (upgrades.path1)
+                {
+                    SetMark(enemy);
+                }
+
+                if (upgrades.path1Upg3)
+                {
+                    impact = true;
+                }
+
+
             }
+        }
+        if (impact)
+        {
+            currentHab1Cd -= p1up3CdReduc;
         }
     }
     public void SpikesAttack()
@@ -114,6 +202,8 @@ public class Amphrost : PjBase
 
         Collider2D[] enemiesHit = Physics2D.OverlapCircleAll(transform.position, up1Area, GameManager.Instance.unitLayer);
         PjBase enemy;
+
+        bool impact = false;
         foreach (Collider2D enemyColl in enemiesHit)
         {
             enemy = enemyColl.GetComponent<PjBase>();
@@ -123,7 +213,132 @@ public class Amphrost : PjBase
                 enemy.GetComponent<TakeDamage>().TakeRupture(this, rupture); 
                 GameObject fx = Instantiate(basicFxImpact, enemy.transform.position, transform.rotation);
                 fx.transform.up = fx.transform.position - transform.position;
+
+                if (upgrades.path1)
+                {
+                    SetMark(enemy);
+                }
+
+
+                if (upgrades.path1Upg3)
+                {
+                    impact = true;
+                }
             }
+        }
+
+        if (upgrades.path1Upg2)
+        {
+            StartCoroutine(UpgradedSpikesAttack());
+        }
+
+        if (impact)
+        {
+            currentHab1Cd -= p1up3CdReduc;
+        }
+    }
+
+    public IEnumerator UpgradedSpikesAttack()
+    {
+        float dmg;
+        dmg = CalculateStrength(up1Dmg);
+        float rupture;
+        rupture = CalculateRupture(up1RuptureDmg);
+
+        GameObject spikes = Instantiate(p1up2SpikesObject, transform.position, transform.rotation);
+
+        yield return new WaitForSeconds(p1up2Delay);
+
+        Instantiate(p1up2Fx1, spikes.transform.position, spikes.transform.rotation);
+        spikes.transform.localScale = new Vector3(22, 22, 22);
+
+
+        Collider2D[] enemiesHit = Physics2D.OverlapCircleAll(spikes.transform.position, p1up2Area1, GameManager.Instance.unitLayer);
+        PjBase enemy;
+
+        foreach (Collider2D enemyColl in enemiesHit)
+        {
+            enemy = enemyColl.GetComponent<PjBase>();
+            if (enemy.team != team)
+            {
+                enemy.GetComponent<TakeDamage>().TakeDamage(this, CalculateDmg(dmg, out bool isCrit), element, isCrit);
+                enemy.GetComponent<TakeDamage>().TakeRupture(this, rupture);
+                GameObject fx = Instantiate(basicFxImpact, enemy.transform.position, transform.rotation);
+                fx.transform.up = fx.transform.position - spikes.transform.position;
+
+                if (upgrades.path1)
+                {
+                    SetMark(enemy);
+                }
+            }
+        }
+
+
+        yield return new WaitForSeconds(p1up2Delay);
+
+        Instantiate(p1up2Fx2, spikes.transform.position, spikes.transform.rotation);
+
+        enemiesHit = Physics2D.OverlapCircleAll(spikes.transform.position, p1up2Area2, GameManager.Instance.unitLayer);
+
+        foreach (Collider2D enemyColl in enemiesHit)
+        {
+            enemy = enemyColl.GetComponent<PjBase>();
+            if (enemy.team != team)
+            {
+                enemy.GetComponent<TakeDamage>().TakeDamage(this, CalculateDmg(dmg, out bool isCrit), element, isCrit);
+                enemy.GetComponent<TakeDamage>().TakeRupture(this, rupture);
+                GameObject fx = Instantiate(basicFxImpact, enemy.transform.position, transform.rotation);
+                fx.transform.up = fx.transform.position - spikes.transform.position;
+
+                if (upgrades.path1)
+                {
+                    SetMark(enemy);
+                }
+            }
+        }
+
+        Destroy(spikes);
+    }
+
+    public void SetMark(PjBase target)
+    {
+        float dmg;
+        dmg = CalculateStrength(p1MarkDmg);
+        float rupture;
+        rupture = CalculateRupture(p1MarkRuptureDmg);
+        bool hasMark = false;
+        IceMark iceMark = null;
+        if (p1IceMarks.Count > 0)
+        {
+            foreach (IceMark mark in p1IceMarks)
+            {
+                if(mark.target == target)
+                {
+                    hasMark = true;
+                    iceMark = mark;
+                }
+            }
+        }
+
+        if (hasMark)
+        {
+            if (iceMark.isStage2)
+            {
+                target.GetComponent<TakeDamage>().TakeDamage(this, CalculateDmg(dmg, out bool isCrit), element, isCrit);
+                target.GetComponent<TakeDamage>().TakeRupture(this, rupture);
+                if (upgrades.path1Upg1)
+                {
+                    IceExplosion(target.transform.position,false);
+                }
+                p1IceMarks.Remove(iceMark);
+            }
+            iceMark.UpdateMark();
+        }
+        else
+        {
+            iceMark = Instantiate(p1Mark,target.transform).GetComponent<IceMark>();
+            p1IceMarks.Add(iceMark);
+            iceMark.target = target;
         }
     }
 
@@ -212,7 +427,18 @@ public class Amphrost : PjBase
 
                             if (upgrades.upg2)
                             {
-                                IceExplosion(targetEnemy.transform.position);
+                                IceExplosion(targetEnemy.transform.position, false);
+                            }
+
+                            if (upgrades.path1)
+                            {
+                                SetMark(targetEnemy);
+                            }
+
+                            if (upgrades.path1Upg3)
+                            {
+                                stats.atSpd += p1up3ExtraAtSpd;
+                                p1up3CurrentBuffDuration = p1up3BuffDuration;
                             }
                         }
                     }
@@ -222,7 +448,7 @@ public class Amphrost : PjBase
         }
     }
 
-    public void IceExplosion(Vector3 location)
+    public void IceExplosion(Vector3 location, bool isGlacial)
     {
         Instantiate(up2Fx, location, transform.rotation);
 
@@ -242,37 +468,27 @@ public class Amphrost : PjBase
                 enemy.GetComponent<TakeDamage>().TakeRupture(this, rupture);
                 GameObject fx = Instantiate(basicFxImpact, enemy.transform.position, transform.rotation);
                 fx.transform.up = fx.transform.position - location;
+
+                if (isGlacial && upgrades.path2Upg3)
+                {
+                    Instantiate(hab2ShieldParticle, enemy.transform.position, transform.rotation).GetComponent<GlacialProjectile>().user = gameObject;
+                }
             }
         }
+
+        
     }
 
     public override IEnumerator Hab2()
     {
         if (currentHab2Cd <= 0 && !IsCasting() && !dashing && upgrades.upg1 && upgrades.upg2)
         {
-            if (upgrades.upg3)
+            if (upgrades.path2Upg2)
             {
-                Instantiate(up2Fx, transform.position, transform.rotation);
-
-                float dmg1;
-                dmg1 = CalculateStrength(up2Dmg);
-                float rupture;
-                rupture = CalculateRupture(up2RuptureDmg);
-
-                Collider2D[] enemiesHit = Physics2D.OverlapCircleAll(transform.position, up2Area, GameManager.Instance.unitLayer);
-                PjBase enemy;
-                foreach (Collider2D enemyColl in enemiesHit)
-                {
-                    enemy = enemyColl.GetComponent<PjBase>();
-                    if (enemy.team != team)
-                    {
-                        enemy.GetComponent<TakeDamage>().TakeDamage(this, CalculateDmg(dmg1, out bool isCrit), element, isCrit);
-                        enemy.GetComponent<TakeDamage>().TakeRupture(this, rupture);
-                        Vector2 dir = enemy.transform.position - transform.position;
-                        StartCoroutine(enemy.Dash(dir,up3Spd,up3Range-dir.magnitude));
-                    }
-                }
+                p2up2CurrentTimePerTick = p2up2TimePerTick;
             }
+
+            p2CurrentExplosionValue = 0 + hab2Shield.shieldAmount;
 
             hab2Shield.ChangeShieldAmount(-hab2Shield.shieldAmount);
 
@@ -295,15 +511,15 @@ public class Amphrost : PjBase
             {
                 if (tickCounter <= 0)
                 {
-                    Collider2D[] enemiesHit = Physics2D.OverlapCircleAll(transform.position, hab2Area, GameManager.Instance.unitLayer);
-                    PjBase enemy;
-                    foreach (Collider2D enemyColl in enemiesHit)
+                    Collider2D[] enemiesHit1 = Physics2D.OverlapCircleAll(transform.position, hab2Area, GameManager.Instance.unitLayer);
+                    PjBase enemy1;
+                    foreach (Collider2D enemyColl in enemiesHit1)
                     {
-                        enemy = enemyColl.GetComponent<PjBase>();
-                        if (enemy.team != team)
+                        enemy1 = enemyColl.GetComponent<PjBase>();
+                        if (enemy1.team != team)
                         {
-                            enemy.GetComponent<TakeDamage>().TakeDamage(this, CalculateDmg(dmg, out bool isCrit), element, isCrit);
-                            Instantiate(hab2ShieldParticle, enemy.transform.position, transform.rotation).GetComponent<GlacialProjectile>().user = gameObject;
+                            enemy1.GetComponent<TakeDamage>().TakeDamage(this, CalculateDmg(dmg, out bool isCrit), element, isCrit);
+                            Instantiate(hab2ShieldParticle, enemy1.transform.position, transform.rotation).GetComponent<GlacialProjectile>().user = gameObject;
                         }
                     }
                     tickCounter = 1f / hab2TicksPerSecond;
@@ -313,13 +529,74 @@ public class Amphrost : PjBase
                 yield return null;
             }
 
+            if(p2CurrentExplosionValue > p2MaxExplosionValue)
+            {
+                p2CurrentExplosionValue = p2MaxExplosionValue;
+            }
+
+            Instantiate(p2ExplosionFx, transform.position, transform.rotation);
+
+            float dmg1;
+            dmg1 = CalculateStrength(p2CurrentExplosionValue + p2MinExplosionValue);
+
+            Collider2D[] enemiesHit = Physics2D.OverlapCircleAll(transform.position, hab2Area, GameManager.Instance.unitLayer);
+            PjBase enemy;
+            foreach (Collider2D enemyColl in enemiesHit)
+            {
+                enemy = enemyColl.GetComponent<PjBase>();
+                if (enemy.team != team)
+                {
+                    enemy.GetComponent<TakeDamage>().TakeDamage(this, CalculateDmg(dmg1, out bool isCrit), element, isCrit);
+                    GameObject fx = Instantiate(basicFxImpact, enemy.transform.position, transform.rotation);
+                    fx.transform.up = fx.transform.position - transform.position;
+                }
+            }
+
+            StartCoroutine(PlayAnimation("Idle"));
+            yield return null;
             AnimationCallStopAnim();
         }
         yield return base.Hab2();
     }
 
+    public void GlacialExplosion()
+    {
+        if (upgrades.upg3)
+        {
+            Instantiate(up2Fx, transform.position, transform.rotation);
+
+            float dmg1;
+            dmg1 = CalculateStrength(up2Dmg);
+            float rupture;
+            rupture = CalculateRupture(up2RuptureDmg);
+
+            Collider2D[] enemiesHit = Physics2D.OverlapCircleAll(transform.position, up2Area, GameManager.Instance.unitLayer);
+            PjBase enemy;
+            foreach (Collider2D enemyColl in enemiesHit)
+            {
+                enemy = enemyColl.GetComponent<PjBase>();
+                if (enemy.team != team)
+                {
+                    enemy.GetComponent<TakeDamage>().TakeDamage(this, CalculateDmg(dmg1, out bool isCrit), element, isCrit);
+                    enemy.GetComponent<TakeDamage>().TakeRupture(this, rupture);
+                    Vector2 dir = enemy.transform.position - transform.position;
+                    StartCoroutine(enemy.Dash(dir, up3Spd, up3Range - dir.magnitude));
+                }
+            }
+        }
+    }
+
     public void HealShield()
     {
+        if (upgrades.path2)
+        {
+            float value = (hab2Shield.shieldAmount + CalculateMHp(hab2ShieldPerTick)) - hab2Shield.maxShieldAmount;
+            if (value>0)
+            {
+                p2CurrentExplosionValue += value;
+            }
+        }
+
         hab2Shield.ChangeShieldAmount(CalculateMHp(hab2ShieldPerTick));
     }
 
@@ -328,7 +605,7 @@ public class Amphrost : PjBase
         base.OnEnemyBreak(target, amount);
         if (upgrades.upg4)
         {
-            IceExplosion(target.transform.position);
+            IceExplosion(target.transform.position, false);
         }
     }
     public void OnDrawGizmosSelected()

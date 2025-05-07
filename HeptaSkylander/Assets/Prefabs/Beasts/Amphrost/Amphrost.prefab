@@ -1212,16 +1212,16 @@ MonoBehaviour:
   upgrades:
     upg1: 1
     upg2: 1
-    upg3: 0
-    upg4: 0
+    upg3: 1
+    upg4: 1
     path1: 0
     path1Upg1: 0
     path1Upg2: 0
     path1Upg3: 0
-    path2: 0
-    path2Upg1: 0
-    path2Upg2: 0
-    path2Upg3: 0
+    path2: 1
+    path2Upg1: 1
+    path2Upg2: 1
+    path2Upg3: 1
   damageTextOffset: 0
   dmgDealed: 0
   invisible: 0
@@ -1242,7 +1242,7 @@ MonoBehaviour:
   hab2FxObject: {fileID: 8993820445824448182, guid: 89d44a9b47b59234a9b9a2085e8b10fd, type: 3}
   hab2ShieldParticle: {fileID: 8993820445824448182, guid: 9c7c07782cd957b49bbafd269238c229, type: 3}
   hab2TotalDmg: 135
-  hab2Area: 11
+  hab2Area: 17
   hab2TotalDuration: 3.25
   hab2MaxShield: 40
   hab2ShieldLosePerSecond: 1
@@ -1258,6 +1258,27 @@ MonoBehaviour:
   up2Area: 6
   up3Range: 8
   up3Spd: 30
+  p1Mark: {fileID: 8993820445824448182, guid: d7abfb1adf924d14ca3459a058247073, type: 3}
+  p1IceMarks: []
+  p1ruptureMult: 35
+  p1MarkDmg: 20
+  p1MarkRuptureDmg: 30
+  p1up2SpikesObject: {fileID: 4120239122858893076, guid: c615e20e9b9e0ff48aba1077892cd6c5, type: 3}
+  p1up2Fx1: {fileID: 8993820445824448182, guid: fb62ad3cd4777b840837e6056410ea7d, type: 3}
+  p1up2Fx2: {fileID: 8993820445824448182, guid: 4f2b72062e9d38c4791a460e1d990109, type: 3}
+  p1up2Delay: 0.75
+  p1up2Area1: 8.5
+  p1up2Area2: 11
+  p1up3BuffDuration: 4
+  p1up3ExtraAtSpd: 0.4
+  p1up3CdReduc: 0.75
+  p2HpBoost: 25
+  p2ExtraTicks: 3
+  p2MaxExplosionValue: 125
+  p2MinExplosionValue: 100
+  p2CurrentExplosionValue: 0
+  p2ExplosionFx: {fileID: 8993820445824448182, guid: cca6690ad745551489babce8805e00f3, type: 3}
+  p2up2TimePerTick: 1.5
 --- !u!1 &8074388031177618119 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7185100018732391839, guid: 8b3f640e1ab28104292574ee30b932fe, type: 3}

@@ -9,7 +9,6 @@ public class Stats
     public int lvl;
     public float mHp;
     public float mPosture;
-    [HideInInspector]
     public float hp;
     [HideInInspector]
     public float posture;

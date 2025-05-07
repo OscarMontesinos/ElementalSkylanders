@@ -329,7 +329,7 @@ MonoBehaviour:
   lookAtPointer: 0
   pointer: {fileID: 1505266543011812747}
   cursor: {fileID: 1039217363961670490}
-  element: 0
+  element: 8
   spinObjects: {fileID: 0}
   hpBar: {fileID: 7122665078970364933}
   stunnBar: {fileID: 0}
@@ -920,7 +920,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4236322770131913033, guid: 9951dc35b407f974db774e7f02674eaa, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5144334651718507071, guid: 9951dc35b407f974db774e7f02674eaa, type: 3}
       propertyPath: m_AnchorMax.x

@@ -11,7 +11,7 @@ public class Shield : Buff
     {
         this.user = user;
         this.target = target;
-        this.shieldAmount = shieldAmount;
+        this.maxShieldAmount = maxShieldAmmount;
         ChangeShieldAmount(shieldAmount);
         if (duration == 0)
         {
@@ -52,6 +52,7 @@ public class Shield : Buff
 
         if(maxShieldAmount>0 && maxShieldAmount < shieldAmount)
         {
+            target.stats.shield -= (target.stats.shield - maxShieldAmount);
             shieldAmount = maxShieldAmount;
         }
 

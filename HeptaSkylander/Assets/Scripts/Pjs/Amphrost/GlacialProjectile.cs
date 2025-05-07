@@ -14,13 +14,16 @@ public class GlacialProjectile : MonoBehaviour
         {
             transform.Translate((user.transform.position - transform.position).normalized * spd*Time.deltaTime);
         }
+        spd += (spd * 1.15f*Time.deltaTime);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject == user)
         {
-            user.GetComponent<Amphrost>().HealShield();
+            Amphrost amph = user.GetComponent<Amphrost>();
+            amph.HealShield();
+
             Destroy(gameObject);
         }
     }

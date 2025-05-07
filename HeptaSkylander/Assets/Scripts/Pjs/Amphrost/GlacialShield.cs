@@ -10,6 +10,10 @@ public class GlacialShield : Shield
         if(shieldAmount > 0)
         {
             ChangeShieldAmount(amphrost.hab2ShieldLosePerSecond *(-Time.deltaTime));
+            if (amphrost.upgrades.path2Upg1)
+            {
+                amphrost.Heal(amphrost,amphrost.hab2ShieldLosePerSecond * 0.5f * Time.deltaTime, amphrost.element);
+            }
         }
         base.Update();
     }
