@@ -258,9 +258,12 @@ public class PjBase : MonoBehaviour, TakeDamage
 
     public IEnumerator PlayAnimation(string name)
     {
-        animator.Play("Idle");
-        yield return null;
-        animator.Play(name);
+        if (animator != null)
+        {
+            animator.Play("Idle");
+            yield return null;
+            animator.Play(name);
+        }
     }
 
     public virtual void AnimationCallStopAnim()
@@ -316,6 +319,10 @@ public class PjBase : MonoBehaviour, TakeDamage
     }
 
     public virtual void DamageDealed(PjBase target, float amount)
+    {     
+        
+    }
+    public virtual void OnEnemyBreak(PjBase target, float amount)
     {     
         
     }
@@ -507,8 +514,10 @@ public class PjBase : MonoBehaviour, TakeDamage
             if (stats.posture <= 0)
             {
                 Stunn(user, ((user.stats.rupture * user.stats.ruptureMult) / 100) + (((user.stats.sinergy + user.stats.strength) * 30)) / 100);
+                user.OnEnemyBreak(this, value);
             }
         }
+
     }
     public virtual void Heal(PjBase user, float value, HitData.Element element)
     {
@@ -599,6 +608,8 @@ public class PjBase : MonoBehaviour, TakeDamage
     {
 
     }
+
+    
     void Stunn(PjBase user, float stunDmg)
     {
         stunTime = 3; 

@@ -289,6 +289,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1590444650, guid: 5bbcc7e3bcda1b74288cb3dc30623c5a, type: 3}
+      propertyPath: upgrades.upg3
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1590444650, guid: 5bbcc7e3bcda1b74288cb3dc30623c5a, type: 3}
+      propertyPath: upgrades.upg4
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 71829592114919981, guid: 5bbcc7e3bcda1b74288cb3dc30623c5a, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0

@@ -1256,6 +1256,8 @@ MonoBehaviour:
   up2Dmg: 30
   up2RuptureDmg: 40
   up2Area: 6
+  up3Range: 8
+  up3Spd: 30
 --- !u!1 &8074388031177618119 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7185100018732391839, guid: 8b3f640e1ab28104292574ee30b932fe, type: 3}

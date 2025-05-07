@@ -42,6 +42,9 @@ public class Amphrost : PjBase
     public float up2RuptureDmg;
     public float up2Area;
 
+    public float up3Range;
+    public float up3Spd;
+
     public override void Start()
     {
         base.Start();
@@ -247,6 +250,30 @@ public class Amphrost : PjBase
     {
         if (currentHab2Cd <= 0 && !IsCasting() && !dashing && upgrades.upg1 && upgrades.upg2)
         {
+            if (upgrades.upg3)
+            {
+                Instantiate(up2Fx, transform.position, transform.rotation);
+
+                float dmg1;
+                dmg1 = CalculateStrength(up2Dmg);
+                float rupture;
+                rupture = CalculateRupture(up2RuptureDmg);
+
+                Collider2D[] enemiesHit = Physics2D.OverlapCircleAll(transform.position, up2Area, GameManager.Instance.unitLayer);
+                PjBase enemy;
+                foreach (Collider2D enemyColl in enemiesHit)
+                {
+                    enemy = enemyColl.GetComponent<PjBase>();
+                    if (enemy.team != team)
+                    {
+                        enemy.GetComponent<TakeDamage>().TakeDamage(this, CalculateDmg(dmg1, out bool isCrit), element, isCrit);
+                        enemy.GetComponent<TakeDamage>().TakeRupture(this, rupture);
+                        Vector2 dir = enemy.transform.position - transform.position;
+                        StartCoroutine(enemy.Dash(dir,up3Spd,up3Range-dir.magnitude));
+                    }
+                }
+            }
+
             hab2Shield.ChangeShieldAmount(-hab2Shield.shieldAmount);
 
             currentHab2Cd = CDR(hab2Cd);
@@ -294,6 +321,15 @@ public class Amphrost : PjBase
     public void HealShield()
     {
         hab2Shield.ChangeShieldAmount(CalculateMHp(hab2ShieldPerTick));
+    }
+
+    public override void OnEnemyBreak(PjBase target, float amount)
+    {
+        base.OnEnemyBreak(target, amount);
+        if (upgrades.upg4)
+        {
+            IceExplosion(target.transform.position);
+        }
     }
     public void OnDrawGizmosSelected()
     {
