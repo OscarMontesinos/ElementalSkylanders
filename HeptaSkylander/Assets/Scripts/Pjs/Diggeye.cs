@@ -56,12 +56,14 @@ public class Diggeye : PjBase
     bool p2Up0DashAvailable;
     bool p2up0canActiveTripleAttack;
 
+    List<PjBase> p2Up1enemiesSucked= new List<PjBase>();
+    public float p2Up1LifePercentageHeal;
+
     public float p2up2DmgBoost;
     public float p2up2HpBoost;
     public float p2up2ResisBoost;
 
-    List<PjBase> p2Up1enemiesSucked= new List<PjBase>();
-    public float p2Up1LifePercentageHeal;
+    bool p2up3Active;
     public override void Awake()
     {
         if (upgrades.path2Upg2)
@@ -128,10 +130,32 @@ public class Diggeye : PjBase
         {
             p2Up0DashAvailable = false;
         }
+
+        if(currentBasicCd == 0)
+        {
+            p2up3Active = false;
+        }
     }
 
     public override IEnumerator MainAttack()
     {
+        if (p2up3Active && upgrades.path2Upg3 && !softCasting && !dashing) 
+        {
+            p2up3Active = false;
+            if (currentHab1Cd < 1)
+            {
+                currentHab1Cd = 1;
+            }
+            currentBasicCd = CalculateAtSpd(basicCd * stats.atSpd);
+            lockPointer = false;
+            softCasting = true;
+            lookAtPointer = true;
+
+            yield return null;
+            lockPointer = true;
+
+            StartCoroutine(PlayAnimation("DiggeyeBasic4"));
+        }
         if (hab2Underground)
         {
             UnburyAttack();
@@ -344,6 +368,7 @@ public class Diggeye : PjBase
         yield return null;
 
         StartCoroutine(PlayAnimation("DiggeyeBasic3"));
+        p2up3Active = true;
     }
     IEnumerator UseHab1()
     {
