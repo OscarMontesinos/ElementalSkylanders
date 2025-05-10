@@ -1274,7 +1274,7 @@ MonoBehaviour:
   p1up3CdReduc: 0.75
   p2HpBoost: 25
   p2ExtraTicks: 3
-  p2MaxExplosionValue: 125
+  p2MaxExplosionValue: 225
   p2MinExplosionValue: 100
   p2CurrentExplosionValue: 0
   p2ExplosionFx: {fileID: 8993820445824448182, guid: cca6690ad745551489babce8805e00f3, type: 3}

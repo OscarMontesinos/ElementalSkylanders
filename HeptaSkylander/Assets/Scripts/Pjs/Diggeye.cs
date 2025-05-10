@@ -207,7 +207,7 @@ public class Diggeye : PjBase
                 StartCoroutine(PlayAnimation("DiggeyeBasic2"));
             }
             basicComboCount += 1;
-            comboReset = 0.75f;
+            comboReset = 1.25f;
         }
         else if(dashing && p2up0canActiveTripleAttack)
         {
@@ -559,6 +559,7 @@ public class Diggeye : PjBase
             }
             yield return null;
         }
+
 
         p1Up2Active = false;
         p1Up1Active = false;
