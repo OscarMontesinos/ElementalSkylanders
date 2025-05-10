@@ -7,6 +7,10 @@ using UnityEngine;
 public class Stats
 {
     public int lvl;
+    [HideInInspector]
+    public float exp;
+    [HideInInspector]
+    public int money;
     public float mHp;
     public float mPosture;
     public float hp;

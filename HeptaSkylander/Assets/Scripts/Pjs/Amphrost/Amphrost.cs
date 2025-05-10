@@ -533,24 +533,26 @@ public class Amphrost : PjBase
             {
                 p2CurrentExplosionValue = p2MaxExplosionValue;
             }
-
-            Instantiate(p2ExplosionFx, transform.position, transform.rotation);
-
-            float dmg1;
-            dmg1 = CalculateStrength(p2CurrentExplosionValue + p2MinExplosionValue);
-
-            Collider2D[] enemiesHit = Physics2D.OverlapCircleAll(transform.position, hab2Area, GameManager.Instance.unitLayer);
-            PjBase enemy;
-            foreach (Collider2D enemyColl in enemiesHit)
+            if (upgrades.path2)
             {
-                enemy = enemyColl.GetComponent<PjBase>();
-                if (enemy.team != team)
+                Instantiate(p2ExplosionFx, transform.position, transform.rotation);
+
+                float dmg1;
+                dmg1 = CalculateStrength(p2CurrentExplosionValue + p2MinExplosionValue);
+
+                Collider2D[] enemiesHit = Physics2D.OverlapCircleAll(transform.position, hab2Area, GameManager.Instance.unitLayer);
+                PjBase enemy;
+                foreach (Collider2D enemyColl in enemiesHit)
                 {
-                    enemy.GetComponent<TakeDamage>().TakeDamage(this, CalculateDmg(dmg1, out bool isCrit), element, isCrit);
-                    GameObject fx = Instantiate(basicFxImpact, enemy.transform.position, transform.rotation);
-                    fx.transform.up = fx.transform.position - transform.position;
+                    enemy = enemyColl.GetComponent<PjBase>();
+                    if (enemy.team != team)
+                    {
+                        enemy.GetComponent<TakeDamage>().TakeDamage(this, CalculateDmg(dmg1, out bool isCrit), element, isCrit);
+                        GameObject fx = Instantiate(basicFxImpact, enemy.transform.position, transform.rotation);
+                        fx.transform.up = fx.transform.position - transform.position;
+                    }
                 }
-            }
+            }   
 
             StartCoroutine(PlayAnimation("Idle"));
             yield return null;

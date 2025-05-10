@@ -8,7 +8,8 @@ using System.Reflection;
 using Unity.VisualScripting;
 
 public class PlayerController : MonoBehaviour
-{   
+{
+    public int quartz;
     [HideInInspector]
     public Vector2 inputMov;
     Vector2 inputCursor;

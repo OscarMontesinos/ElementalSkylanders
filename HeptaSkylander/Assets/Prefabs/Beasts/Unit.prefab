@@ -352,6 +352,8 @@ MonoBehaviour:
   ignoreSoftCastDebuff: 0
   stats:
     lvl: 1
+    exp: 0
+    money: 0
     mHp: 100
     mPosture: 50
     hp: 0
@@ -381,6 +383,7 @@ MonoBehaviour:
     path2Upg1: 0
     path2Upg2: 0
     path2Upg3: 0
+  rewards: []
   damageTextOffset: 1
   dmgDealed: 0
   invisible: 0
@@ -398,6 +401,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 58994d5931d137f488e0d5cfd23ed654, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  quartz: 0
   inputMov: {x: 0, y: 0}
   cam: {fileID: 0}
   wallLayer:

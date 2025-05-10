@@ -68,6 +68,7 @@ public class PjBase : MonoBehaviour, TakeDamage
     public bool ignoreSoftCastDebuff;
     public Stats stats;
     public Upgrades upgrades;
+    public List<Rewards> rewards = new List<Rewards>();
     public float damageTextOffset;
     [HideInInspector]
     public float dmgDealed;
@@ -625,6 +626,23 @@ public class PjBase : MonoBehaviour, TakeDamage
     {
         killer.OnKill(this);
 
+        if (!controller)
+        {
+            List<Rewards> rewards = new List<Rewards>(this.rewards);
+            List<RewardSpawner.RewardStruct> rewardList = new List<RewardSpawner.RewardStruct>();
+            foreach(Rewards reward in rewards)
+            {
+                while (reward.quantity > 0)
+                {
+                    RewardSpawner.RewardStruct rewardStr;
+                    rewardStr.quantity = 1;
+                    rewardStr.coinType = reward.type;
+                    rewardList.Add(rewardStr);
+                    reward.quantity--;
+                }
+            }
+            Instantiate(GameManager.Instance.rewardSpawner, transform.position, transform.rotation).GetComponent<RewardSpawner>().SetUp(killer, rewardList);
+        }
 
         if (chName != "Dummy")
         {

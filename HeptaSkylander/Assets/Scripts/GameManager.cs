@@ -43,7 +43,8 @@ public class GameManager : MonoBehaviour
 
     public float ingameSpeed;
 
-
+    public GameObject coin;
+    public GameObject rewardSpawner;
    
 
     public enum GameModes

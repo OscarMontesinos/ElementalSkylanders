@@ -47,7 +47,21 @@ MonoBehaviour:
   gamemode: 0
   baseController: {fileID: 2297667835147027760, guid: cce1037fca2ba254f82fd7e01faafc19, type: 3}
   baseUIManager: {fileID: 3160418526335597406, guid: 9951dc35b407f974db774e7f02674eaa, type: 3}
-  waypoints: []
+  waypoints:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   pjList: []
   wallLayer:
     serializedVersion: 2
@@ -87,25 +101,6 @@ MonoBehaviour:
   crystalColor:
     serializedVersion: 2
     rgba: 4293695719
-  FoV: {fileID: 15680838488341122, guid: 59016fa050b749949a070cc5c2391425, type: 3}
   ingameSpeed: 1
-  spawn: 1
-  waveSpawners:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  waves:
-  - enemies:
-    - {fileID: 3067878427793984926, guid: 1d2e150851867f94cb6fb67717ced5d6, type: 3}
-    - {fileID: 532945335671207488, guid: c9b89fe8238f731468152e945170618f, type: 3}
-    - {fileID: 8782423954374131972, guid: 512f9da0de6c1cf4a93e75a3e2af3780, type: 3}
-  - enemies:
-    - {fileID: 3067878427793984926, guid: 1d2e150851867f94cb6fb67717ced5d6, type: 3}
-    - {fileID: 2877856918372479675, guid: e36b6ca5b72fad445a42d7113035d0fd, type: 3}
-    - {fileID: 8782423954374131972, guid: 512f9da0de6c1cf4a93e75a3e2af3780, type: 3}
-  - enemies:
-    - {fileID: 3578622738029404817, guid: 0ba742255f3b6fa4c9585458303ca718, type: 3}
-    - {fileID: 2815199514054945834, guid: f84bd536969c1514da0e3053d7618b70, type: 3}
-    - {fileID: 2815199514054945834, guid: f84bd536969c1514da0e3053d7618b70, type: 3}
-  currentWave: []
+  coin: {fileID: 8993820445824448182, guid: aed22b44192f02040b02da4375c5cb05, type: 3}
+  rewardSpawner: {fileID: 2661169684902584645, guid: b6215b36eaabb0b4396ad72316b3e90f, type: 3}

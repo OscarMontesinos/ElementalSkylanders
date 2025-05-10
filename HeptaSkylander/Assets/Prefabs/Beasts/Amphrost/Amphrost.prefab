@@ -1193,6 +1193,8 @@ MonoBehaviour:
   ignoreSoftCastDebuff: 0
   stats:
     lvl: 1
+    exp: 0
+    money: 0
     mHp: 65
     mPosture: 50
     hp: 0
@@ -1222,6 +1224,7 @@ MonoBehaviour:
     path2Upg1: 1
     path2Upg2: 1
     path2Upg3: 1
+  rewards: []
   damageTextOffset: 0
   dmgDealed: 0
   invisible: 0

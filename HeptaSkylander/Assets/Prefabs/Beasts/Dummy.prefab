@@ -119,6 +119,38 @@ PrefabInstance:
       propertyPath: controller
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 7185100020070105984, guid: 8b3f640e1ab28104292574ee30b932fe, type: 3}
+      propertyPath: rewards.Array.size
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 7185100020070105984, guid: 8b3f640e1ab28104292574ee30b932fe, type: 3}
+      propertyPath: rewards.Array.data[1].type
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7185100020070105984, guid: 8b3f640e1ab28104292574ee30b932fe, type: 3}
+      propertyPath: rewards.Array.data[2].type
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7185100020070105984, guid: 8b3f640e1ab28104292574ee30b932fe, type: 3}
+      propertyPath: rewards.Array.data[3].type
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7185100020070105984, guid: 8b3f640e1ab28104292574ee30b932fe, type: 3}
+      propertyPath: rewards.Array.data[0].quantity
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7185100020070105984, guid: 8b3f640e1ab28104292574ee30b932fe, type: 3}
+      propertyPath: rewards.Array.data[1].quantity
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7185100020070105984, guid: 8b3f640e1ab28104292574ee30b932fe, type: 3}
+      propertyPath: rewards.Array.data[2].quantity
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7185100020070105984, guid: 8b3f640e1ab28104292574ee30b932fe, type: 3}
+      propertyPath: rewards.Array.data[3].quantity
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 7185100020070106109, guid: 8b3f640e1ab28104292574ee30b932fe, type: 3}
       propertyPath: m_Name
       value: Dummy
