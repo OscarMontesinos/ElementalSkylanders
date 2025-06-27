@@ -29,6 +29,7 @@ public class Projectile : MonoBehaviour
     [HideInInspector]
     public Vector2 startPos;
     public bool pierce;
+    public bool collideEnemies;
     public bool collideWalls;
     public GameObject particle;
     public bool withoutRange;
@@ -82,7 +83,7 @@ public class Projectile : MonoBehaviour
 
     public virtual void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.CompareTag("Unit") && collision.GetComponent<PjBase>().team != user.team && !targetsAffected.Contains( collision.GetComponent<PjBase>()))
+        if(collideEnemies && collision.CompareTag("Unit") && collision.GetComponent<PjBase>().team != user.team && !targetsAffected.Contains( collision.GetComponent<PjBase>()))
         {
             PjBase target = collision.GetComponent<PjBase>();
             target.GetComponent<TakeDamage>().TakeDamage(user, user.CalculateDmg(dmg,out bool isCrit), element, isCrit);

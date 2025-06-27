@@ -148,7 +148,7 @@
                 {
                     "name": "",
                     "id": "85e32b72-1a15-4cec-8cac-e2b66363ae1a",
-                    "path": "<HID::BDA NSW wired controller>/button8",
+                    "path": "<HID::BDA NSW wired controller>/button3",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -170,7 +170,7 @@
                 {
                     "name": "",
                     "id": "c3695180-af64-437f-be6e-3f6a0efa6e2b",
-                    "path": "<HID::BDA NSW wired controller>/button7",
+                    "path": "<HID::BDA NSW wired controller>/button8",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -192,7 +192,7 @@
                 {
                     "name": "",
                     "id": "54fb91e9-7257-4f98-bec2-64195154f498",
-                    "path": "<HID::BDA NSW wired controller>/button4",
+                    "path": "<HID::BDA NSW wired controller>/button7",
                     "interactions": "",
                     "processors": "",
                     "groups": "",

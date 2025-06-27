@@ -350,7 +350,6 @@ public class PjBase : MonoBehaviour, TakeDamage
 
     public float CalculateDmg(float baseDmg, out bool isCrit)
     {
-        isCrit = false;
         return CalculateDmg(baseDmg,0, out isCrit);
     }
     public float CalculateDmg(float baseDmg, float critChanceMod, out bool isCrit)
@@ -509,6 +508,8 @@ public class PjBase : MonoBehaviour, TakeDamage
             hpBar.maxValue = stats.mHp;
             hpBar.value = stats.hp;
         }
+
+        OnDamageTaken(user,value);
     }
     void TakeDamage.TakeRupture(PjBase user, float value)
     {
@@ -604,7 +605,7 @@ public class PjBase : MonoBehaviour, TakeDamage
     {
 
     }
-    public virtual void OnDamageTaken()
+    public virtual void OnDamageTaken(PjBase user, float value)
     {
 
     }

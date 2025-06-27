@@ -1087,6 +1087,10 @@ PrefabInstance:
       propertyPath: character
       value: 
       objectReference: {fileID: 9009439391554608863}
+    - target: {fileID: 7185100020070106111, guid: 8b3f640e1ab28104292574ee30b932fe, type: 3}
+      propertyPath: isUsingGamepad
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8869837989033509499, guid: 8b3f640e1ab28104292574ee30b932fe, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -1236,7 +1240,7 @@ MonoBehaviour:
   hpBarText: {fileID: 6821525552976851322}
   hab1Image: {fileID: 21300000, guid: b99fd9498f9cdb2449cde6963eb1edad, type: 3}
   hab2Image: {fileID: 21300000, guid: 7a663cca1bb4c6645b64eee79ae80eb5, type: 3}
-  maxRange: 0
+  maxRange: 15
   hab1Cd: 5
   hab2Cd: 15
   currentBasicCd: 0
