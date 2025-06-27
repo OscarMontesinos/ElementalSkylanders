@@ -141,10 +141,10 @@ public class UIManager : MonoBehaviour
 
         if (ch != null && ch.stats.hp > 0)
         {
-            habIndicators[0].UIUpdate(ch.hab1Cd, ch.currentHab1Cd);
-            habIndicators[2].UIUpdate(ch.hab1Cd, ch.currentHab1Cd);
-            habIndicators[1].UIUpdate(ch.hab2Cd, ch.currentHab2Cd);
-            habIndicators[3].UIUpdate(ch.hab2Cd, ch.currentHab2Cd);
+            habIndicators[0].UIUpdate(ch.hab1Cd, ch.currentHab1Cd, ch.currentHab1Charges);
+            habIndicators[2].UIUpdate(ch.hab1Cd, ch.currentHab1Cd, ch.currentHab1Charges);
+            habIndicators[1].UIUpdate(ch.hab2Cd, ch.currentHab2Cd, ch.currentHab2Charges);
+            habIndicators[3].UIUpdate(ch.hab2Cd, ch.currentHab2Cd, ch.currentHab2Charges);
         }
     }
 

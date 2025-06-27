@@ -57,6 +57,10 @@ public class PjBase : MonoBehaviour, TakeDamage
     [HideInInspector]
     public float currentHab2Cd;
     [HideInInspector]
+    public int currentHab1Charges;
+    [HideInInspector]
+    public int currentHab2Charges;
+    [HideInInspector]
     public bool casting;
     [HideInInspector]
     public bool softCasting;
@@ -263,7 +267,10 @@ public class PjBase : MonoBehaviour, TakeDamage
         {
             animator.Play("Idle");
             yield return null;
-            animator.Play(name);
+            if (name != "Idle")
+            {
+                animator.Play(name);
+            }
         }
     }
 
@@ -275,7 +282,7 @@ public class PjBase : MonoBehaviour, TakeDamage
         lookAtPointer = false;
     }
 
-    public bool IsCasting()
+    public virtual bool IsCasting()
     {
         if(!softCasting && !casting)
         {
@@ -713,7 +720,7 @@ public class PjBase : MonoBehaviour, TakeDamage
     {
         if (this != null)
         {
-            StartCoroutine(Dash(direction, speed, range, false, true, true));
+            StartCoroutine(Dash(direction, speed, range, ignoreWalls, ignoreAir, true));
         }
         yield return null;
     }
@@ -780,7 +787,6 @@ public class PjBase : MonoBehaviour, TakeDamage
             distance = destinyPoint - new Vector2(transform.position.x, transform.position.y);
             yield return null;
         }
-        dashing = false;
         rb.velocity = new Vector2(0, 0);
 
         GetComponent<Collider2D>().isTrigger = false;
@@ -789,14 +795,15 @@ public class PjBase : MonoBehaviour, TakeDamage
             GetComponent<NavMeshAgent>().enabled = true;
         }
 
-
         if (cancelAnimation)
         {
             StartCoroutine(PlayAnimation("Idle"));
             AnimationCallStopAnim();
         }
+
+        dashing = false;
     }
-    public virtual IEnumerator Dash(Transform direction, float speed, float range, bool ignoreWalls, bool ignoreAir, bool cancelAnimation)
+    public virtual IEnumerator Dash(Transform direction, float speed, bool ignoreWalls, bool ignoreAir, bool cancelAnimation)
     {
         if (stunTime > 0)
         {

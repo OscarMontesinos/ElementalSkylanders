@@ -6,13 +6,27 @@ using UnityEngine.UI;
 
 public class HabilityUIIndicator : MonoBehaviour
 {
+    public Mode mode;
     public Slider slider;
     public TextMeshProUGUI text;
+    public GameObject chargesGO;
+    public TextMeshProUGUI charges;
     public GameObject content;
     public Image image;
 
-    public void UIUpdate(float maxCD, float cd)
+    public enum Mode
     {
+        normal, charges
+    }
+
+    public void UIUpdate(float maxCD, float cd, int charges)
+    {
+        if(mode == Mode.normal && charges > 0)
+        {
+            mode = Mode.charges;
+            chargesGO.SetActive(true);
+        }
+        this.charges.text = charges.ToString();
         slider.maxValue = maxCD;
         slider.value = cd;
         if (cd > 0)

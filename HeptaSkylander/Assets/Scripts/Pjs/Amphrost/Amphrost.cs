@@ -400,7 +400,7 @@ public class Amphrost : PjBase
 
             if (targetEnemy.team != team)
             {
-                StartCoroutine(Dash(hab1EnemyTrnsfm, hab1Spd, hab1Range, false, false, true));
+                StartCoroutine(Dash(hab1EnemyTrnsfm, hab1Spd, false, false, true));
 
                 currentHab1Cd = CDR(hab1Cd);
 

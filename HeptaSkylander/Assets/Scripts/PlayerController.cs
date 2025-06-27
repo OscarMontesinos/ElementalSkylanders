@@ -31,7 +31,6 @@ public class PlayerController : MonoBehaviour
     bool moveBasic;
     bool move1;
     bool move2;
-    bool move3;
 
     float maxRange;
 
@@ -95,7 +94,6 @@ public class PlayerController : MonoBehaviour
 
             HandleCamera();
         }
-
 
 
         //if (unit.pointer != null) { unit.pointer.transform.position = cam.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, Input.mousePosition.z - cam.transform.position.z)); }
@@ -289,12 +287,6 @@ public class PlayerController : MonoBehaviour
         CheckInput(ctx.action.activeControl.device.displayName);
 
     }
-    public void Move3(InputAction.CallbackContext ctx)
-    {
-        move3 = ctx.action.triggered;
-
-        CheckInput(ctx.action.activeControl.device.displayName);
-    }
 
     public void PullBackCamera(InputAction.CallbackContext ctx)
     {
@@ -313,7 +305,10 @@ public class PlayerController : MonoBehaviour
 
     public void Pause(InputAction.CallbackContext ctx)
     {
-        character.UIManager.Pause();
+        if (ctx.action.triggered)
+        {
+            character.UIManager.Pause();
+        }
 
         CheckInput(ctx.action.activeControl.device.displayName);
     }
@@ -324,7 +319,7 @@ public class PlayerController : MonoBehaviour
 
         CheckInput(ctx.action.activeControl.device.displayName);
     }
-        void HandleHabilities()
+    void HandleHabilities()
     {
         if (character.stunTime <= 0)
         {

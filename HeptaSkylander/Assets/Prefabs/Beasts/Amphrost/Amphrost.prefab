@@ -1216,14 +1216,14 @@ MonoBehaviour:
     upg2: 1
     upg3: 1
     upg4: 1
-    path1: 0
-    path1Upg1: 0
-    path1Upg2: 0
-    path1Upg3: 0
-    path2: 1
-    path2Upg1: 1
-    path2Upg2: 1
-    path2Upg3: 1
+    path1: 1
+    path1Upg1: 1
+    path1Upg2: 1
+    path1Upg3: 1
+    path2: 0
+    path2Upg1: 0
+    path2Upg2: 0
+    path2Upg3: 0
   rewards: []
   damageTextOffset: 0
   dmgDealed: 0

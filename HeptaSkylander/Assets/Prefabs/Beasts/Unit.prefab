@@ -345,6 +345,8 @@ MonoBehaviour:
   basicComboCount: 0
   currentHab1Cd: 0
   currentHab2Cd: 0
+  currentHab1Charges: 0
+  currentHab2Charges: 0
   casting: 0
   softCasting: 0
   dashing: 0
