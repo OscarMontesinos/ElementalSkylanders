@@ -4,14 +4,18 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.InputSystem.XR;
+using UnityEngine.SocialPlatforms;
 using UnityEngine.UIElements;
 using static UnityEngine.EventSystems.EventTrigger;
 using static UnityEngine.GraphicsBuffer;
 
 public class LiconWall : MonoBehaviour
 {
+    Licon licon;
     bool activated = false;
     PjBase user;
+    public SpriteRenderer sprite1;
+    public SpriteRenderer sprite2;
     public ParticleSystem fx1;
     public ParticleSystem fx2;
     [HideInInspector]
@@ -19,7 +23,7 @@ public class LiconWall : MonoBehaviour
     float mHp;
     float hp;
 
-    List<PjBase> targets;
+    List<PjBase> targets = new List<PjBase>();
     public float up2Wide;
     public float up2Length;
     float ticksPerSecond;
@@ -27,6 +31,7 @@ public class LiconWall : MonoBehaviour
     float rupturePerTick;
     float slow;
     float tick;
+
 
     public void SetUp(PjBase user, float duration, float mHp, float ticksPerSecond, float dmgPerTick, float rupturePerTick, float slow)
     {
@@ -40,6 +45,7 @@ public class LiconWall : MonoBehaviour
         this.rupturePerTick = rupturePerTick;
         tick = 1 / ticksPerSecond;
         this.slow = slow;
+        licon = user.GetComponent<Licon>();
     }
 
     public void ActivateWall()
@@ -51,6 +57,9 @@ public class LiconWall : MonoBehaviour
 
     private void Update()
     {
+        sprite1.color = new Color(sprite1.color.r, sprite1.color.g, sprite1.color.b, Mathf.Lerp(0, 1, hp / mHp));
+        sprite2.color = new Color(sprite2.color.r, sprite2.color.g, sprite2.color.b, Mathf.Lerp(0, 1, hp / mHp));
+
         duration -=Time.deltaTime;
         if(duration <= 0)
         {
@@ -97,16 +106,31 @@ public class LiconWall : MonoBehaviour
                 {
                     hp -= bullet.dmg;
                     bullet.Die();
+                    if(hp <= 0)
+                    {
+                        Die();
+                    }
+                }
+
+                if (user.upgrades.path1Upg1 && bullet.GetComponent<Bomb>())
+                {
+                    Bomb bomb = bullet.GetComponent<Bomb>();
+                    Instantiate(bomb.explosionFx, bomb.transform.position, transform.rotation);
+                    bomb.dmg += user.CalculateSinergy(licon.p1Up1DmgMod);
                 }
             }
 
-            if (user.upgrades.upg2 && collision.GetComponent<PjBase>())
+            if (collision.GetComponent<PjBase>())
             {
                 PjBase enemy = collision.GetComponent<PjBase>();
                 if (enemy.team != user.team)
                 {
-                    enemy.stats.spd -= slow;
-                    targets.Add(enemy);
+                    if (user.upgrades.upg2)
+                    {
+                        enemy.stats.spd -= slow;
+                        targets.Add(enemy);
+                    }
+                    enemy.dashing = false;
                 }
             }
         }

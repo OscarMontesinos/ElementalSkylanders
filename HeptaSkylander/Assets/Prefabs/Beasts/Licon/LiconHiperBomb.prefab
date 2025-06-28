@@ -10,12 +10,11 @@ GameObject:
   m_Component:
   - component: {fileID: 2392102533236354337}
   - component: {fileID: 774013117281053368}
-  - component: {fileID: 3473114944218414337}
-  - component: {fileID: 6765605965033011487}
+  - component: {fileID: 1081323327374728883}
   - component: {fileID: 5358781808287396883}
   - component: {fileID: 6994741967514045510}
   m_Layer: 0
-  m_Name: LiconBomb
+  m_Name: LiconHiperBomb
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -91,7 +90,7 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &3473114944218414337
+--- !u!114 &1081323327374728883
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -100,7 +99,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1489608599733403683}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 53cf81f52dc9b45499b4cc2edc6146e5, type: 3}
+  m_Script: {fileID: 11500000, guid: a1efad2898884dd47a5cde84d59a9d42, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   user: {fileID: 0}
@@ -116,31 +115,16 @@ MonoBehaviour:
   startPos: {x: 0, y: 0}
   pierce: 0
   collideEnemies: 0
-  collideWalls: 1
+  collideWalls: 0
   particle: {fileID: 8268771735120098207}
   withoutRange: 0
   dist: 0
   targetsAffected: []
-  explosionFx: {fileID: 7473040292639468618, guid: 8474bd2dae4ea194e940c4321c57cc94, type: 3}
-  explosionFxUp4: {fileID: 7473040292639468618, guid: 517af8259bbfb01438e49340c08e2723, type: 3}
-  explosionFxP1Up3: {fileID: 7473040292639468618, guid: c6c0344c33eb61f4d9693b97e69ae107, type: 3}
+  explosionFx: {fileID: 2266836593700180336, guid: 257dc628bffc9db4d9219446aabb1129, type: 3}
+  explosionFxUp4: {fileID: 0}
   area: 0
   maxSpd: 0
   minSpd: 0
-  postExplosion: {fileID: 2266836593700180336, guid: 14ff715b6c5699444963bc6ac9b83472, type: 3}
---- !u!114 &6765605965033011487
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1489608599733403683}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d609b54657fadd64499b3da8c4311af6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  time: 1
 --- !u!50 &5358781808287396883
 Rigidbody2D:
   serializedVersion: 4
@@ -204,7 +188,7 @@ Transform:
   m_GameObject: {fileID: 2545773928393984278}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.3670747, y: 1.3670747, z: 1.3670747}
+  m_LocalScale: {x: 4.496719, y: 4.496719, z: 4.496719}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2392102533236354337}
@@ -1094,7 +1078,7 @@ ParticleSystem:
     sphericalDirectionAmount: 0
     randomPositionAmount: 0
     radius:
-      value: 0.63
+      value: 1.79
       mode: 0
       spread: 0
       speed:
@@ -1266,7 +1250,7 @@ ParticleSystem:
     rateOverDistance:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 5
+      scalar: 15
       minScalar: 0
       maxCurve:
         serializedVersion: 2

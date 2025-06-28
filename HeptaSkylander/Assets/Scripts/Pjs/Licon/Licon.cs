@@ -6,9 +6,11 @@ using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEngine;
 using UnityEngine.UIElements;
 using UnityEngine.UIElements.Experimental;
+using static UnityEngine.Rendering.HableCurve;
 
 public class Licon : PjBase
 {
+    [Header("Base")]
     public GameObject basicObject;
     public GameObject basicPoint;
     public float basicCd;
@@ -31,6 +33,7 @@ public class Licon : PjBase
     public float hab2Range;
     float hab2MinCd;
 
+    [Header("Upgrades")]
     public ParticleSystem up1Fx;
     public bool up1Active;
     public float up1Spd;
@@ -47,6 +50,37 @@ public class Licon : PjBase
     public float up4Dmg;
     public float up4Area;
 
+    [Header("Path 1")]
+    public int p1Charges;
+    [HideInInspector]
+    public int p1CurrentCharges;
+    public float p1DmgPerCharge;
+
+    public float p1Up1DmgMod;
+
+    public float p1Up2Dmg;
+    public int p1Up2Ticks;
+    public float p1Up2InitialDelay;
+    public float p1Up2TickDelay;
+
+    public float p1up3Dmg;
+    public float p1up3Area;
+
+    [Header("Path 2")]
+    public float p2AtSpd;
+    public float p2ExtraDmg;
+
+    public int p2Up1Charges;
+
+    public GameObject p2Up2Object;
+    public List<GameObject> p2up2Indicators;
+    public float p2Up2Seconds;
+    float p2Up2CurrentSeconds;
+    public float p2Up2Area;
+    public float p2Up2Dmg;
+
+    public float p2Up3SecondsRefunded;
+
 
     public override void Start()
     {
@@ -57,9 +91,23 @@ public class Licon : PjBase
             up1Active = true;
             up1Fx.Play();
         }
-        if (upgrades.upg2)
+        if (upgrades.upg3)
         {
             hab2Charges = up3Charges;
+            currentHab2Charges = hab2Charges;
+        }
+        if (upgrades.upg4)
+        {
+            basicDmg += up4Dmg;
+            basicArea = up4Area;
+        }
+        if (upgrades.path2)
+        {
+            stats.atSpd = p2AtSpd;
+        }
+        if (upgrades.path2Upg1)
+        {
+            hab2Charges = p2Up1Charges;
             currentHab2Charges = hab2Charges;
         }
         if (upgrades.upg4)
@@ -80,6 +128,79 @@ public class Licon : PjBase
                 stats.spd += up1Spd;
                 up1Active = true;
                 up1Fx.Play();
+            }
+        }
+
+        if (upgrades.path2Upg2 && p2Up2CurrentSeconds <= p2Up2Seconds)
+        {
+            p2Up2CurrentSeconds += Time.deltaTime;
+
+            float segments = p2Up2Seconds / p2up2Indicators.Count;
+
+            if( p2Up2CurrentSeconds / segments >= 1)
+            {
+                p2up2Indicators[0].SetActive(true);
+            }
+            else
+            {
+                p2up2Indicators[0].SetActive(false);
+                p2up2Indicators[1].SetActive(false);
+                p2up2Indicators[2].SetActive(false);
+                p2up2Indicators[3].SetActive(false);
+                p2up2Indicators[4].SetActive(false);
+            }
+
+            if(p2Up2CurrentSeconds / segments >= 2)
+            {
+                p2up2Indicators[1].SetActive(true);
+            }
+            if(p2Up2CurrentSeconds / segments >= 3)
+            {
+                p2up2Indicators[2].SetActive(true);
+            }
+            if(p2Up2CurrentSeconds / segments >= 4)
+            {
+                p2up2Indicators[3].SetActive(true);
+            }
+            if(p2Up2CurrentSeconds / segments >= 5)
+            {
+                p2up2Indicators[4].SetActive(true);
+
+                currentBasicCd = 0;
+            }
+        }
+
+        if (upgrades.path1)
+        {
+            if (p1CurrentCharges > 0)
+            {
+                p2up2Indicators[0].SetActive(true);
+            }
+            else
+            {
+                p2up2Indicators[0].SetActive(false);
+                p2up2Indicators[1].SetActive(false);
+                p2up2Indicators[2].SetActive(false);
+                p2up2Indicators[3].SetActive(false);
+                p2up2Indicators[4].SetActive(false);
+            }
+
+            if (p1CurrentCharges > 1)
+            {
+                p2up2Indicators[1].SetActive(true);
+            }
+            if (p1CurrentCharges > 2)
+            {
+                p2up2Indicators[2].SetActive(true);
+            }
+            if (p1CurrentCharges > 3)
+            {
+                p2up2Indicators[3].SetActive(true);
+            }
+            if (p1CurrentCharges > 4)
+            {
+                p2up2Indicators[4].SetActive(true);
+
             }
         }
 
@@ -129,6 +250,21 @@ public class Licon : PjBase
         float dmg;
         dmg = CalculateSinergy(basicDmg);
 
+        if(up1Active && upgrades.path2)
+        {
+            dmg += CalculateSinergy(p2ExtraDmg);
+        }
+
+        if (upgrades.path2Upg2 && p2Up2CurrentSeconds >= p2Up2Seconds)
+        {
+            dmg += CalculateSinergy(p2Up2Dmg);
+        }
+
+        if (upgrades.path1)
+        {
+            dmg += CalculateSinergy(p1DmgPerCharge * p1CurrentCharges);
+        }
+
         float range = 0;
         Vector2 dist = cursor.transform.position - transform.position;
 
@@ -148,8 +284,18 @@ public class Licon : PjBase
             range = basicMinRange;
         }
 
-        Bomb bomb = Instantiate(basicObject,basicPoint.transform.position,pointer.transform.rotation).GetComponent<Bomb>();
-        bomb.SetUp(this, element, AttackType.Magical, dmg, basicMaxSpd, basicMinSpd, range, basicArea);
+        if (upgrades.path2Upg2 && p2Up2CurrentSeconds >= p2Up2Seconds)
+        {
+            p2Up2CurrentSeconds = 0;
+            HiperBomb bomb = Instantiate(p2Up2Object, basicPoint.transform.position, pointer.transform.rotation).GetComponent<HiperBomb>();
+            bomb.SetUp(this, element, AttackType.Magical, dmg, basicMaxSpd, range, p2Up2Area);
+        }
+        else
+        {
+            Bomb bomb = Instantiate(basicObject, basicPoint.transform.position, pointer.transform.rotation).GetComponent<Bomb>();
+            bomb.SetUp(this, element, AttackType.Magical, dmg, basicMaxSpd, basicMinSpd, range, basicArea);
+        }
+            
     }
 
     public override IEnumerator Hab1()
@@ -207,6 +353,10 @@ public class Licon : PjBase
                 currentHab2Cd = CDR(hab2Cd);
             }
             currentHab2Charges--;
+            if (upgrades.path1)
+            {
+                p1CurrentCharges = 0;
+            }
             lockPointer = false;
             casting = true;
             lookAtPointer = false;
@@ -237,6 +387,7 @@ public class Licon : PjBase
             up1Active = false;
             up1CurrentCd = CDR(up1Cd);
             up1Fx.Stop();
+            p2Up2CurrentSeconds = 0;
         }
         base.OnDamageTaken(user, value);
     }
@@ -245,14 +396,22 @@ public class Licon : PjBase
     {
         Gizmos.DrawWireSphere(transform.position, basicMinRange);
         Gizmos.DrawWireSphere(transform.position, basicRange);
-
-        if (upgrades.upg4)
+        if (upgrades.path1Upg3)
+        {
+            Gizmos.DrawWireSphere(transform.position + (transform.up.normalized * basicRange), p1up3Area);
+        }
+        else if (upgrades.upg4)
         {
             Gizmos.DrawWireSphere(transform.position + (transform.up.normalized * basicRange), up4Area);
         }
         else
         {
             Gizmos.DrawWireSphere(transform.position + (transform.up.normalized * basicRange), basicArea);
+        }
+
+        if (upgrades.path2Upg2)
+        {
+            Gizmos.DrawWireSphere(transform.position + (transform.up.normalized * basicRange), p2Up2Area);
         }
 
         Gizmos.DrawWireSphere(transform.position, hab2Range);
