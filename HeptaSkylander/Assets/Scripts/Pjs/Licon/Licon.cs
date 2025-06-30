@@ -110,10 +110,10 @@ public class Licon : PjBase
             hab2Charges = p2Up1Charges;
             currentHab2Charges = hab2Charges;
         }
-        if (upgrades.upg4)
+        if (upgrades.path1Upg3)
         {
-            basicDmg += up4Dmg;
-            basicArea = up4Area;
+            basicDmg += p1up3Dmg;
+            basicArea = p1up3Area;
         }
     }
     public override void Update()
@@ -209,7 +209,7 @@ public class Licon : PjBase
             currentHab2Charges++;
             if (currentHab2Charges < hab2Charges)
             {
-                currentHab2Cd = hab2Cd;
+                currentHab2Cd += hab2Cd;
             }
         }
 

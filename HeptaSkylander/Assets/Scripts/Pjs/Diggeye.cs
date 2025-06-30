@@ -138,25 +138,28 @@ public class Diggeye : PjBase
             hab1MinCd -= Time.deltaTime;
         }
 
-        Collider2D[] enemiesHit = Physics2D.OverlapCircleAll(transform.position, hab2Area, GameManager.Instance.unitLayer);
-        PjBase enemy;
-        foreach (Collider2D enemyColl in enemiesHit)
+        if (upgrades.upg1 && upgrades.upg2)
         {
-            enemy = enemyColl.GetComponent<PjBase>();
-            if (enemy.team != team)
+            Collider2D[] enemiesHit = Physics2D.OverlapCircleAll(transform.position, hab2Area, GameManager.Instance.unitLayer);
+            PjBase enemy;
+            foreach (Collider2D enemyColl in enemiesHit)
             {
-                if (hab2Targets.Contains(enemy) && enemy.stats.hp > ((enemy.stats.mHp * hab2HPThreshold)/100) + hab2BaseDmg)
+                enemy = enemyColl.GetComponent<PjBase>();
+                if (enemy.team != team)
                 {
-                    Destroy(hab2Marks[hab2Targets.IndexOf(enemy)]);
-                    hab2Marks.Remove(hab2Marks[hab2Targets.IndexOf(enemy)]);
-                    hab2Targets.Remove(enemy);
-                    break;
-                }
-                else if (!hab2Targets.Contains(enemy) && enemy.stats.hp <= ((enemy.stats.mHp * hab2HPThreshold) / 100) + hab2BaseDmg)
-                {
-                    hab2Marks.Add(Instantiate(hab2Mark));
-                    hab2Targets.Add(enemy);
-                    break;
+                    if (hab2Targets.Contains(enemy) && enemy.stats.hp > ((enemy.stats.mHp * hab2HPThreshold) / 100) + hab2BaseDmg)
+                    {
+                        Destroy(hab2Marks[hab2Targets.IndexOf(enemy)]);
+                        hab2Marks.Remove(hab2Marks[hab2Targets.IndexOf(enemy)]);
+                        hab2Targets.Remove(enemy);
+                        break;
+                    }
+                    else if (!hab2Targets.Contains(enemy) && enemy.stats.hp <= ((enemy.stats.mHp * hab2HPThreshold) / 100) + hab2BaseDmg)
+                    {
+                        hab2Marks.Add(Instantiate(hab2Mark));
+                        hab2Targets.Add(enemy);
+                        break;
+                    }
                 }
             }
         }
@@ -347,8 +350,10 @@ public class Diggeye : PjBase
                         {
                             StartCoroutine(Dash(pointer.transform.up, hab1Spd, hab1RangeExt,true, true));
                         }
-
-                        p1Up0Target = enemy;
+                        if (upgrades.path1)
+                        {
+                            p1Up0Target = enemy;
+                        }
                     }
                 }
             }
@@ -367,7 +372,7 @@ public class Diggeye : PjBase
 
     public override IEnumerator Hab2()
     {
-        if (!IsCasting() && !dashing)
+        if (!IsCasting() && !dashing &&  upgrades.upg1 && upgrades.upg2)
         {
             PjBase target = null;
             Collider2D[] enemiesHit = Physics2D.OverlapCircleAll(transform.position, hab2Area, GameManager.Instance.unitLayer);

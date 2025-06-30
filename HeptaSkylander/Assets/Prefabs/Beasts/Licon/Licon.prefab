@@ -12799,7 +12799,7 @@ MonoBehaviour:
   p1up3Dmg: 17.5
   p1up3Area: 8
   p2AtSpd: 1.4
-  p2ExtraDmg: 17.5
+  p2ExtraDmg: 27.5
   p2Up1Charges: 3
   p2Up2Object: {fileID: 1489608599733403683, guid: 60157b60c83580d40939012f0afe436c, type: 3}
   p2up2Indicators:

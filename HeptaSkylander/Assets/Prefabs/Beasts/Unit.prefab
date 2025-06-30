@@ -414,7 +414,7 @@ MonoBehaviour:
   lockPointer: 0
   targetBoss: {fileID: 0}
   cursorSprite: {fileID: 6313643478161590937}
-  isUsingGamepad: 0
+  isUsingGamepad: 1
 --- !u!50 &7185100020070105986
 Rigidbody2D:
   serializedVersion: 4

@@ -45,7 +45,7 @@ public class HiperBomb : Projectile
                 enemy.GetComponent<TakeDamage>().TakeDamage(user, user.CalculateDmg(dmg, out bool isCrit), element, isCrit);
                 if (user.upgrades.path2Upg3)
                 {
-                    user.currentHab2Cd -= licon.p2Up3SecondsRefunded;
+                    user.currentHab2Cd -= (licon.p2Up3SecondsRefunded * 2) ;
                 }
             }
         }
