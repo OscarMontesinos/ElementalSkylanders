@@ -110,15 +110,20 @@ public class UIManager : MonoBehaviour
 
     public void UpdateHabIndicatorsImages()
     {
+        if (ch.basicImage)
+        {
+            habIndicators[0].UpdateImage(ch.basicImage);
+            habIndicators[3].UpdateImage(ch.basicImage);
+        }
         if (ch.hab1Image)
         {
-            habIndicators[0].UpdateImage(ch.hab1Image);
-            habIndicators[2].UpdateImage(ch.hab1Image);
+            habIndicators[1].UpdateImage(ch.hab1Image);
+            habIndicators[4].UpdateImage(ch.hab1Image);
         }
         if (ch.hab2Image)
         {
-            habIndicators[1].UpdateImage(ch.hab2Image);
-            habIndicators[3].UpdateImage(ch.hab2Image);
+            habIndicators[2].UpdateImage(ch.hab2Image);
+            habIndicators[5].UpdateImage(ch.hab2Image);
         }
     }
 
@@ -141,10 +146,12 @@ public class UIManager : MonoBehaviour
 
         if (ch != null && ch.stats.hp > 0)
         {
-            habIndicators[0].UIUpdate(ch.hab1Cd, ch.currentHab1Cd, ch.currentHab1Charges);
-            habIndicators[2].UIUpdate(ch.hab1Cd, ch.currentHab1Cd, ch.currentHab1Charges);
-            habIndicators[1].UIUpdate(ch.hab2Cd, ch.currentHab2Cd, ch.currentHab2Charges);
-            habIndicators[3].UIUpdate(ch.hab2Cd, ch.currentHab2Cd, ch.currentHab2Charges);
+            habIndicators[0].UIUpdate(ch.CalculateAtSpd(ch.stats.atSpd), ch.currentBasicCd, 0);
+            habIndicators[3].UIUpdate(ch.CalculateAtSpd(ch.stats.atSpd), ch.currentBasicCd, 0);
+            habIndicators[1].UIUpdate(ch.hab1Cd, ch.currentHab1Cd, ch.currentHab1Charges);
+            habIndicators[4].UIUpdate(ch.hab1Cd, ch.currentHab1Cd, ch.currentHab1Charges);
+            habIndicators[2].UIUpdate(ch.hab2Cd, ch.currentHab2Cd, ch.currentHab2Charges);
+            habIndicators[5].UIUpdate(ch.hab2Cd, ch.currentHab2Cd, ch.currentHab2Charges);
         }
     }
 

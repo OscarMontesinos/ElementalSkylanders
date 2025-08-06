@@ -41,6 +41,7 @@ public class PjBase : MonoBehaviour, TakeDamage
     public Slider shieldBar;
     public TextMeshProUGUI hpBarText;
 
+    public Sprite basicImage;
     public Sprite hab1Image;
     public Sprite hab2Image;
     public float maxRange;

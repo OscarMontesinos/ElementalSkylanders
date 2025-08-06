@@ -733,6 +733,14 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 2.461
       objectReference: {fileID: 0}
+    - target: {fileID: 4856876211523887684, guid: 8b3f640e1ab28104292574ee30b932fe, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4856876211523887684, guid: 8b3f640e1ab28104292574ee30b932fe, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5218147502476589788, guid: 8b3f640e1ab28104292574ee30b932fe, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
@@ -814,6 +822,14 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5826489508273006761, guid: 8b3f640e1ab28104292574ee30b932fe, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6331177550581126355, guid: 8b3f640e1ab28104292574ee30b932fe, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6331177550581126355, guid: 8b3f640e1ab28104292574ee30b932fe, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
@@ -1176,6 +1192,7 @@ MonoBehaviour:
   stunnBar: {fileID: 6347510217769758756}
   shieldBar: {fileID: 1414850262346204845}
   hpBarText: {fileID: 6821525552976851322}
+  basicImage: {fileID: 21300000, guid: 5159fe29bbc948b4db6da7c05161d70a, type: 3}
   hab1Image: {fileID: 21300000, guid: dac6c4d3ba569fe47b30d58501fb50fc, type: 3}
   hab2Image: {fileID: 21300000, guid: 3d25bfae784330f49b60f38fab8e1c65, type: 3}
   maxRange: 0
@@ -1186,6 +1203,8 @@ MonoBehaviour:
   basicComboCount: 0
   currentHab1Cd: 0
   currentHab2Cd: 0
+  currentHab1Charges: 0
+  currentHab2Charges: 0
   casting: 0
   softCasting: 0
   dashing: 0

@@ -1238,6 +1238,7 @@ MonoBehaviour:
   stunnBar: {fileID: 6347510217769758756}
   shieldBar: {fileID: 1414850262346204845}
   hpBarText: {fileID: 6821525552976851322}
+  basicImage: {fileID: 21300000, guid: 4f17e8bd49df07b4c8dbcd49dee9d6e2, type: 3}
   hab1Image: {fileID: 21300000, guid: b99fd9498f9cdb2449cde6963eb1edad, type: 3}
   hab2Image: {fileID: 21300000, guid: 7a663cca1bb4c6645b64eee79ae80eb5, type: 3}
   maxRange: 15
